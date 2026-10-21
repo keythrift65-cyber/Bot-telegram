@@ -210,6 +210,52 @@ sqlite3 data/bot.sqlite ".backup 'backup-$(date +%F).sqlite'"
 
 ---
 
+## 6. Dejarlo funcionando 24/7 en un portátil
+
+Con long polling no hay que abrir puertos en el router ni tener IP fija: basta con que el portátil tenga internet. El bot espera solo a que haya conexión al arrancar y pm2 lo reinicia si se cae.
+
+**1) Instala Node.js 20+** desde [nodejs.org](https://nodejs.org) (versión LTS) y [Git](https://git-scm.com).
+En Windows, si `npm install` falla al compilar better-sqlite3, instala las "Herramientas de compilación de C++" que ofrece el instalador de Node (casilla *Tools for Native Modules*).
+
+**2) Descarga, configura y arranca** (en la terminal, o en PowerShell en Windows):
+
+```bash
+git clone <url-de-tu-repositorio> bot-telegram
+cd bot-telegram
+npm install
+cp .env.example .env      # en Windows: copy .env.example .env
+# edita .env y pon BOT_TOKEN y ADMIN_ID
+npm run import            # compila y carga las preguntas
+npm install -g pm2
+pm2 start ecosystem.config.js
+pm2 save
+```
+
+**3) Que arranque solo al encender el portátil:**
+
+- **Linux / macOS:** `pm2 startup` y ejecuta el comando que te muestre. Luego `pm2 save`.
+- **Windows:** `pm2 startup` no funciona. Usa:
+  ```powershell
+  npm install -g pm2-windows-startup
+  pm2-startup install
+  pm2 save
+  ```
+
+**4) Que el portátil no se duerma nunca:**
+
+- **Windows:** Configuración → Sistema → Inicio/apagado y suspensión → *Nunca* (enchufado). Panel de control → Opciones de energía → *Al cerrar la tapa: No hacer nada*. En Windows Update, configura las *horas activas* para que no reinicie cuando quiera (si reinicia, el bot vuelve solo).
+- **macOS:** Ajustes → Batería → Opciones → *Evitar la suspensión automática cuando la pantalla esté apagada*. Con la tapa cerrada el Mac se duerme salvo que tenga una pantalla externa conectada.
+- **Linux:** en `/etc/systemd/logind.conf` pon `HandleLidSwitch=ignore` y `HandleLidSwitchExternalPower=ignore`, y reinicia con `sudo systemctl restart systemd-logind`. Desactiva la suspensión automática en los ajustes de energía.
+
+**5) Consejos:**
+
+- Déjalo enchufado y, si tu portátil lo permite, limita la carga al 80 % para cuidar la batería.
+- Haz copias de `data/bot.sqlite` (usuarios y pagos) en la nube o en un USB con regularidad.
+- Si se va la luz o internet, el bot deja de responder mientras tanto, pero no se pierde nada: Telegram guarda los mensajes hasta 24 horas y el bot los procesa al volver.
+- Comprueba el estado cuando quieras con `pm2 status` y `pm2 logs bot-oposiciones`.
+
+---
+
 ## ⚙️ Ajustes
 
 Precio, límite diario, días sin repetir y zona horaria están en `src/config.ts`. Tras cambiarlos: `npm run build` y `pm2 restart bot-oposiciones`.

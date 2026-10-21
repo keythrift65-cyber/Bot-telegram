@@ -7,8 +7,9 @@ module.exports = {
       cwd: __dirname,
       instances: 1, // Con long polling solo puede haber UNA instancia
       autorestart: true,
-      max_restarts: 50,
-      restart_delay: 5000,
+      // Si se cae, espera cada vez más entre reinicios (hasta 15 s) y no se rinde nunca
+      exp_backoff_restart_delay: 1000,
+      max_restarts: 100000,
       max_memory_restart: "300M",
       env: {
         NODE_ENV: "production",
