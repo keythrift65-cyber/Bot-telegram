@@ -81,9 +81,15 @@ function main(): void {
 
   // Insertamos dentro de una transacción: o entran todas o ninguna
   let inserted = 0;
-  db.transaction(() => {
+  db.exec("BEGIN");
+  try {
     for (const q of questions) if (insertQuestionIfNew(q)) inserted++;
-  })();
+    db.exec("COMMIT");
+  } catch (err) {
+    db.exec("ROLLBACK");
+    console.error("❌ Error al guardar las preguntas, no se ha importado ninguna:", (err as Error).message);
+    process.exit(1);
+  }
 
   console.log(`✅ Leídas: ${questions.length} · Nuevas: ${inserted} · Duplicadas: ${questions.length - inserted}`);
   console.log(`📚 Total de preguntas en la base de datos: ${countQuestions()}`);

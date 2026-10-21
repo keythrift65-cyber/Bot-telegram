@@ -10,7 +10,7 @@ Bot de preguntas tipo test para preparar la oposición de Auxiliar Administrativ
 - Suscripción premium de 250 ⭐ cada 30 días, con renovación automática
 - Comandos de administrador: `/stats` y `/refund`
 
-Tecnología: Node.js 20+, TypeScript, [grammY](https://grammy.dev), SQLite (better-sqlite3), long polling.
+Tecnología: Node.js 22.13+, TypeScript, [grammY](https://grammy.dev), SQLite (el incluido en Node, `node:sqlite`: no hay que compilar nada), long polling.
 
 ---
 
@@ -55,7 +55,7 @@ ecosystem.config.js          Configuración de pm2
 
 ## 2. Instalación
 
-Necesitas **Node.js 20 o superior** (`node -v` para comprobarlo).
+Necesitas **Node.js 22.13 o superior** (`node -v` para comprobarlo).
 
 ```bash
 git clone <url-de-tu-repositorio> bot-telegram
@@ -79,7 +79,7 @@ npm run build
 npm start
 ```
 
-Para desarrollo, con recarga automática al guardar:
+Para probarlo rápido en tu ordenador (compila y arranca en primer plano; Ctrl+C para pararlo):
 
 ```bash
 npm run dev
@@ -152,11 +152,11 @@ El `charge_id` aparece en la consola/logs cuando entra cada pago (`[PAGO] … ch
 
 Ejemplo para Ubuntu/Debian (un VPS pequeño es suficiente).
 
-**1) Instalar Node.js 20 y herramientas de compilación** (better-sqlite3 las necesita si no hay binario precompilado):
+**1) Instalar Node.js 22 o superior y git:**
 
 ```bash
-curl -fsSL https://deb.nodesource.com/setup_20.x | sudo -E bash -
-sudo apt-get install -y nodejs build-essential python3 git
+curl -fsSL https://deb.nodesource.com/setup_22.x | sudo -E bash -
+sudo apt-get install -y nodejs git
 ```
 
 **2) Descargar el proyecto, configurarlo y compilarlo:**
@@ -214,8 +214,8 @@ sqlite3 data/bot.sqlite ".backup 'backup-$(date +%F).sqlite'"
 
 Con long polling no hay que abrir puertos en el router ni tener IP fija: basta con que el portátil tenga internet. El bot espera solo a que haya conexión al arrancar y se reinicia solo si se cae.
 
-**1) Instala Node.js 20+** desde [nodejs.org](https://nodejs.org) (versión LTS) y [Git](https://git-scm.com).
-En Windows, si `npm install` falla al compilar better-sqlite3, instala las "Herramientas de compilación de C++" que ofrece el instalador de Node (casilla *Tools for Native Modules*).
+**1) Instala Node.js 22 o superior** desde [nodejs.org](https://nodejs.org) (versión LTS) y [Git](https://git-scm.com).
+En Windows también puedes instalarlos con `winget install --id OpenJS.NodeJS.LTS -e` y `winget install --id Git.Git -e`.
 
 **2) Descarga y configura** (en la terminal, o en PowerShell en Windows):
 

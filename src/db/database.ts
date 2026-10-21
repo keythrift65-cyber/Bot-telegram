@@ -1,19 +1,22 @@
 import "dotenv/config";
 import fs from "node:fs";
 import path from "node:path";
-import Database from "better-sqlite3";
+import "./silence-sqlite-warning";
+import { DatabaseSync } from "node:sqlite";
 
 /**
  * Abre (o crea) la base de datos SQLite y se asegura de que existen las tablas.
+ * Usa el SQLite que viene incluido en Node.js (node:sqlite), así no hay que compilar nada.
  * Las fechas se guardan como texto ISO 8601 en UTC (ej: "2026-01-31T10:00:00.000Z"),
  * así se pueden comparar directamente como cadenas.
  */
-export function openDatabase(dbPath: string): Database.Database {
+export function openDatabase(dbPath: string): DatabaseSync {
   fs.mkdirSync(path.dirname(dbPath), { recursive: true });
 
-  const db = new Database(dbPath);
-  db.pragma("journal_mode = WAL"); // Mejor rendimiento con lecturas y escrituras simultáneas
-  db.pragma("foreign_keys = ON");
+  const db = new DatabaseSync(dbPath);
+  db.exec("PRAGMA journal_mode = WAL"); // Mejor rendimiento con lecturas y escrituras simultáneas
+  db.exec("PRAGMA foreign_keys = ON");
+  db.exec("PRAGMA busy_timeout = 5000"); // Espera si otro proceso (ej: npm run import) está escribiendo
 
   db.exec(`
     CREATE TABLE IF NOT EXISTS users (

@@ -44,5 +44,5 @@ export function getStatsByTopic(userId: number): TopicStats[] {
        GROUP BY q.topic
        ORDER BY total DESC`
     )
-    .all(userId) as TopicStats[];
+    .all(userId) as unknown as TopicStats[];
 }
