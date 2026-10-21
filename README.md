@@ -212,32 +212,47 @@ sqlite3 data/bot.sqlite ".backup 'backup-$(date +%F).sqlite'"
 
 ## 6. Dejarlo funcionando 24/7 en un portátil
 
-Con long polling no hay que abrir puertos en el router ni tener IP fija: basta con que el portátil tenga internet. El bot espera solo a que haya conexión al arrancar y pm2 lo reinicia si se cae.
+Con long polling no hay que abrir puertos en el router ni tener IP fija: basta con que el portátil tenga internet. El bot espera solo a que haya conexión al arrancar y se reinicia solo si se cae.
 
 **1) Instala Node.js 20+** desde [nodejs.org](https://nodejs.org) (versión LTS) y [Git](https://git-scm.com).
 En Windows, si `npm install` falla al compilar better-sqlite3, instala las "Herramientas de compilación de C++" que ofrece el instalador de Node (casilla *Tools for Native Modules*).
 
-**2) Descarga, configura y arranca** (en la terminal, o en PowerShell en Windows):
+**2) Descarga y configura** (en la terminal, o en PowerShell en Windows):
 
 ```bash
 git clone <url-de-tu-repositorio> bot-telegram
 cd bot-telegram
 npm install
 cp .env.example .env      # en Windows: copy .env.example .env
-# edita .env y pon BOT_TOKEN y ADMIN_ID
+# edita .env y pon BOT_TOKEN y ADMIN_ID   (en Windows: notepad .env)
 npm run import            # compila y carga las preguntas
-npm install -g pm2
-pm2 start ecosystem.config.js
-pm2 save
 ```
 
-**3) Que arranque solo al encender el portátil:**
+**3) Arráncalo y haz que arranque solo al encender el portátil:**
 
-- **Linux / macOS:** `pm2 startup` y ejecuta el comando que te muestre. Luego `pm2 save`.
-- **Windows:** `pm2 startup` no funciona. Usa:
+- **Windows** (sin pm2: usa el Programador de tareas de Windows, que es más fiable).
+  Abre PowerShell **como administrador** (clic derecho → *Ejecutar como administrador*), entra en la carpeta del bot y ejecuta:
   ```powershell
-  npm install -g pm2-windows-startup
-  pm2-startup install
+  cd C:\Users\TuUsuario\bot-telegram
+utaot-telegram
+  powershell -ExecutionPolicy Bypass -File scripts\windows\instalar-inicio.ps1
+  ```
+  El bot queda en marcha y arrancará solo cada vez que se encienda el portátil, aunque nadie inicie sesión. Si se cierra, se reinicia a los 10 segundos.
+
+  | Para… | Comando (PowerShell como administrador, en la carpeta del bot) |
+  |---|---|
+  | Ver los logs en directo | `Get-Content logs\bot.log -Wait -Tail 30` |
+  | Parar el bot | `powershell -ExecutionPolicy Bypass -File scripts\windows\detener-bot.ps1` |
+  | Volver a arrancarlo | `Start-ScheduledTask -TaskName BotOposiciones` |
+  | Quitar el arranque automático | `powershell -ExecutionPolicy Bypass -File scripts\windows\desinstalar-inicio.ps1` |
+
+  Para actualizar el bot: páralo, haz `git pull` y `npm install`, y vuelve a ejecutar `instalar-inicio.ps1`.
+
+- **Linux / macOS** (con pm2):
+  ```bash
+  npm install -g pm2
+  pm2 start ecosystem.config.js
+  pm2 startup              # ejecuta el comando que te muestre
   pm2 save
   ```
 
@@ -252,7 +267,7 @@ pm2 save
 - Déjalo enchufado y, si tu portátil lo permite, limita la carga al 80 % para cuidar la batería.
 - Haz copias de `data/bot.sqlite` (usuarios y pagos) en la nube o en un USB con regularidad.
 - Si se va la luz o internet, el bot deja de responder mientras tanto, pero no se pierde nada: Telegram guarda los mensajes hasta 24 horas y el bot los procesa al volver.
-- Comprueba el estado cuando quieras con `pm2 status` y `pm2 logs bot-oposiciones`.
+- Comprueba el estado cuando quieras: en Windows mirando `logs\bot.log`; en Linux/macOS con `pm2 status` y `pm2 logs bot-oposiciones`.
 
 ---
 
