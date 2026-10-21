@@ -33,8 +33,9 @@ src/
 ├── db/                      SQLite: conexión, tablas y consultas
 ├── services/                Lógica: fechas, test, suscripción
 └── scripts/
-    └── import-questions.ts  npm run import
-questions.json               Preguntas de ejemplo
+    ├── import-questions.ts  npm run import
+    └── delete-examples.ts   npm run borrar-ejemplos
+preguntas/                   Archivos .json con las preguntas
 ecosystem.config.js          Configuración de pm2
 ```
 
@@ -91,41 +92,45 @@ La base de datos se crea sola en `data/bot.sqlite` la primera vez.
 
 ## 3. Importar preguntas
 
-Las preguntas se cargan desde un JSON con este formato:
+Las preguntas están en la carpeta **`preguntas/`**, en uno o varios archivos `.json` (por ejemplo, uno por bloque del temario). Cada archivo es una lista de preguntas con este formato:
 
 ```json
 [
   {
     "tema": "Constitución Española",
-    "enunciado": "¿Cuál es la forma política del Estado español?",
-    "opciones": {
-      "A": "La Monarquía parlamentaria",
-      "B": "La Monarquía constitucional",
-      "C": "La República parlamentaria",
-      "D": "El Estado autonómico"
-    },
-    "correcta": "A",
+    "enunciado": "¿Cuál es la forma política del Estado español según el artículo 1.3?",
+    "opcion_a": "Monarquía constitucional",
+    "opcion_b": "Estado social y democrático de Derecho",
+    "opcion_c": "Monarquía democrática",
+    "opcion_d": "Monarquía parlamentaria",
+    "correcta": "D",
     "articulo": "Art. 1.3 CE",
-    "explicacion": "El art. 1.3 CE establece que la forma política del Estado español es la Monarquía parlamentaria."
+    "explicacion": "La forma política es la Monarquía parlamentaria."
   }
 ]
 ```
 
-- `tema`, `enunciado`, `opciones` (A-D) y `correcta` son obligatorios. `articulo` y `explicacion` son opcionales pero muy recomendables.
+- `tema`, `enunciado`, las 4 opciones y `correcta` son obligatorios. `articulo` y `explicacion` son opcionales pero muy recomendables.
+- También se admiten las opciones agrupadas: `"opciones": { "A": "...", "B": "...", "C": "...", "D": "..." }`.
 - No importa el orden de las opciones: el bot las desordena cada vez que muestra la pregunta.
+- El `tema` es lo que aparece en "Mis estadísticas" (porcentaje de acierto por tema).
 
 Para importar:
 
 ```bash
-npm run import                         # lee ./questions.json
-npm run import -- ruta/a/otro.json     # otro archivo
+npm run import                               # lee todos los .json de la carpeta preguntas/
+npm run import -- ruta/a/archivo.json        # solo los archivos que indiques
 ```
 
-- Una pregunta con el **mismo tema y enunciado** que otra ya existente se ignora, así que puedes volver a importar el mismo archivo sin crear duplicados.
-- Si alguna pregunta tiene un error de formato, no se importa ninguna y se indica cuál falla.
+- Una pregunta con el **mismo tema y enunciado** que otra ya existente se ignora, así que puedes volver a importar los mismos archivos sin crear duplicados. Para añadir un bloque nuevo, deja su `.json` en `preguntas/` y ejecuta `npm run import`.
+- Si alguna pregunta tiene un error de formato, no se importa nada y se indica en qué archivo y pregunta está.
 - Se puede importar con el bot en marcha; las preguntas nuevas aparecen al momento.
 
-> ⚠️ El `questions.json` incluido tiene 5 preguntas marcadas como **"[EJEMPLO - REVISAR]"** solo para mostrar el formato. Revísalas y sustitúyelas por tu banco de preguntas real antes de lanzar el bot.
+Si importaste las 5 preguntas de ejemplo de versiones anteriores (las que empiezan por "[EJEMPLO - REVISAR]"), bórralas con:
+
+```bash
+npm run borrar-ejemplos
+```
 
 ---
 

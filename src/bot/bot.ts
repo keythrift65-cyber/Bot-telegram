@@ -1,6 +1,7 @@
 import { Bot, GrammyError, HttpError } from "grammy";
 import { config } from "../config";
 import { upsertUser } from "../db/users";
+import { mainMenuKeyboard } from "./keyboards";
 import { adminHandler } from "../handlers/admin";
 import { infoHandler } from "../handlers/info";
 import { paymentsHandler } from "../handlers/payments";
@@ -35,6 +36,13 @@ export function createBot(): Bot {
   bot.use(paymentsHandler);
   bot.use(infoHandler);
   bot.use(adminHandler);
+
+  // Cualquier otro mensaje (texto libre, comando desconocido, foto…): mostramos el menú
+  bot.on("message", async (ctx) => {
+    await ctx.reply("🤔 No te he entendido. Elige una opción del menú:", {
+      reply_markup: mainMenuKeyboard(),
+    });
+  });
 
   // Botones antiguos o desconocidos: quitamos el "reloj" del botón
   bot.on("callback_query", (ctx) => ctx.answerCallbackQuery());

@@ -1,9 +1,13 @@
 /**
- * Importa preguntas desde un archivo JSON a la base de datos sin duplicarlas.
+ * Importa preguntas desde archivos JSON a la base de datos sin duplicarlas.
  *
  * Uso:
- *   npm run import                    -> lee ./questions.json
- *   npm run import -- otro-archivo.json
+ *   npm run import                         -> lee todos los .json de la carpeta ./preguntas
+ *   npm run import -- archivo1.json otro.json
+ *
+ * Cada pregunta puede traer las opciones de dos formas:
+ *   "opciones": { "A": "...", "B": "...", "C": "...", "D": "..." }
+ *   "opcion_a": "...", "opcion_b": "...", "opcion_c": "...", "opcion_d": "..."
  *
  * Una pregunta se considera duplicada si ya existe otra con el mismo tema y enunciado.
  */
@@ -15,7 +19,11 @@ import { countQuestions, insertQuestionIfNew, LETTERS, type Letter, type NewQues
 interface JsonQuestion {
   tema: string;
   enunciado: string;
-  opciones: Record<Letter, string>;
+  opciones?: Partial<Record<Letter, string>>;
+  opcion_a?: string;
+  opcion_b?: string;
+  opcion_c?: string;
+  opcion_d?: string;
   correcta: string;
   articulo?: string;
   explicacion?: string;
@@ -31,52 +39,87 @@ function validate(raw: unknown, index: number): NewQuestion {
   if (!q || typeof q !== "object") fail("no es un objeto");
   if (!q.tema?.trim()) fail('falta "tema"');
   if (!q.enunciado?.trim()) fail('falta "enunciado"');
-  if (!q.opciones || typeof q.opciones !== "object") fail('falta "opciones"');
-  for (const l of LETTERS) {
-    if (!q.opciones![l]?.trim()) fail(`falta la opción ${l}`);
-  }
+  // Opciones en cualquiera de los dos formatos admitidos
+  const options = LETTERS.map((l) => {
+    const value = q.opciones?.[l] ?? q[`opcion_${l.toLowerCase()}` as "opcion_a"];
+    if (typeof value !== "string" || !value.trim()) fail(`falta la opción ${l}`);
+    return value!.trim();
+  });
+  if (new Set(options).size < 4) fail("hay opciones repetidas");
   const correct = q.correcta?.trim().toUpperCase();
   if (!LETTERS.includes(correct as Letter)) fail('"correcta" debe ser A, B, C o D');
 
   return {
     topic: q.tema!.trim(),
     statement: q.enunciado!.trim(),
-    option_a: q.opciones!.A.trim(),
-    option_b: q.opciones!.B.trim(),
-    option_c: q.opciones!.C.trim(),
-    option_d: q.opciones!.D.trim(),
+    option_a: options[0],
+    option_b: options[1],
+    option_c: options[2],
+    option_d: options[3],
     correct: correct as Letter,
     reference: q.articulo?.trim() ?? "",
     explanation: q.explicacion?.trim() ?? "",
   };
 }
 
-function main(): void {
-  const file = path.resolve(process.argv[2] ?? "questions.json");
-  if (!fs.existsSync(file)) {
-    console.error(`❌ No existe el archivo ${file}`);
-    process.exit(1);
-  }
-
+/** Lee y valida un archivo. Si hay cualquier error, detiene el script sin importar nada. */
+function readFile(file: string): NewQuestion[] {
+  const name = path.basename(file);
   let data: unknown;
   try {
     data = JSON.parse(fs.readFileSync(file, "utf8"));
   } catch (err) {
-    console.error(`❌ ${file} no es un JSON válido:`, (err as Error).message);
+    console.error(`❌ ${name} no es un JSON válido:`, (err as Error).message);
     process.exit(1);
   }
   if (!Array.isArray(data)) {
-    console.error("❌ El JSON debe ser una lista de preguntas: [ {...}, {...} ]");
+    console.error(`❌ ${name}: el JSON debe ser una lista de preguntas: [ {...}, {...} ]`);
     process.exit(1);
   }
-
-  // Validamos todo antes de insertar nada
-  let questions: NewQuestion[];
   try {
-    questions = data.map(validate);
+    return data.map(validate);
   } catch (err) {
-    console.error(`❌ ${(err as Error).message}`);
+    console.error(`❌ ${name}: ${(err as Error).message}`);
     process.exit(1);
+  }
+}
+
+/** Archivos a importar: los indicados en la línea de comandos o todos los de ./preguntas */
+function filesToImport(): string[] {
+  const args = process.argv.slice(2);
+  if (args.length > 0) return args.map((f) => path.resolve(f));
+
+  const dir = path.resolve("preguntas");
+  if (!fs.existsSync(dir)) {
+    console.error(`❌ No existe la carpeta ${dir}. Crea la carpeta y pon ahí tus archivos .json`);
+    process.exit(1);
+  }
+  return fs
+    .readdirSync(dir)
+    .filter((f) => f.toLowerCase().endsWith(".json"))
+    .sort()
+    .map((f) => path.join(dir, f));
+}
+
+function main(): void {
+  const files = filesToImport();
+  if (files.length === 0) {
+    console.error("❌ No hay ningún archivo .json que importar.");
+    process.exit(1);
+  }
+  for (const f of files) {
+    if (!fs.existsSync(f)) {
+      console.error(`❌ No existe el archivo ${f}`);
+      process.exit(1);
+    }
+  }
+
+  // Validamos todos los archivos antes de insertar nada
+  const questions: NewQuestion[] = [];
+  for (const f of files) {
+    const fromFile = readFile(f);
+    console.log(`📄 ${path.basename(f)}: ${fromFile.length} preguntas`);
+    questions.push(...fromFile);
   }
 
   // Insertamos dentro de una transacción: o entran todas o ninguna
