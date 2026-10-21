@@ -1,0 +1,29 @@
+{
+  "name": "bot-oposiciones-auxiliar",
+  "version": "1.0.0",
+  "description": "Bot de Telegram para preparar la oposición de Auxiliar Administrativo del Estado con preguntas tipo test",
+  "main": "dist/index.js",
+  "private": true,
+  "engines": {
+    "node": ">=20"
+  },
+  "scripts": {
+    "build": "tsc",
+    "start": "node dist/index.js",
+    "dev": "tsx watch src/index.ts",
+    "import": "npm run build && node dist/scripts/import-questions.js",
+    "typecheck": "tsc --noEmit"
+  },
+  "license": "UNLICENSED",
+  "dependencies": {
+    "better-sqlite3": "^13.0.3",
+    "dotenv": "^18.0.8",
+    "grammy": "^1.46.0"
+  },
+  "devDependencies": {
+    "@types/better-sqlite3": "^9.6.0",
+    "@types/node": "^20.19.43",
+    "tsx": "^4.23.15",
+    "typescript": "^7.0.2"
+  }
+}
