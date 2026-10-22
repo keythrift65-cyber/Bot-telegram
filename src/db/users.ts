@@ -54,3 +54,31 @@ export function countUsersBySource(source: string, nowIso: string): { total: num
     )
     .get(nowIso, source) as { total: number; premium: number };
 }
+
+export interface SourceStats {
+  source: string | null;
+  total: number;
+  premium: number;
+  stars: number;
+}
+
+/**
+ * Usuarios agrupados por origen (null = sin origen: entraron sin enlace con ?start=…),
+ * con cuántos son premium ahora y cuántas estrellas han pagado (sin reembolsos).
+ */
+export function getStatsBySource(nowIso: string): SourceStats[] {
+  return db
+    .prepare(
+      `SELECT u.source AS source,
+              COUNT(*) AS total,
+              COALESCE(SUM(CASE WHEN u.subscription_end > ? THEN 1 ELSE 0 END), 0) AS premium,
+              COALESCE(SUM(p.stars), 0) AS stars
+       FROM users u
+       LEFT JOIN (
+         SELECT user_id, SUM(stars) AS stars FROM payments WHERE refunded = 0 GROUP BY user_id
+       ) p ON p.user_id = u.id
+       GROUP BY u.source
+       ORDER BY total DESC`
+    )
+    .all(nowIso) as unknown as SourceStats[];
+}

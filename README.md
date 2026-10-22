@@ -9,7 +9,7 @@ Bot de preguntas tipo test para preparar la oposición de Auxiliar Administrativ
 - Estadísticas globales y por tema
 - Suscripción premium de 250 ⭐ cada 30 días, con renovación automática
 - Pregunta del día publicada automáticamente a las 9:00 en un canal público, con enlace al bot
-- Comandos de administrador: `/stats`, `/refund`, `/canal_ahora` y `/canal_stats`
+- Comandos de administrador: `/stats`, `/refund`, `/canal_ahora`, `/canal_stats` y `/origenes`
 
 Tecnología: Node.js 22.13+, TypeScript, [grammY](https://grammy.dev), SQLite (el incluido en Node, `node:sqlite`: no hay que compilar nada), long polling.
 
@@ -152,6 +152,7 @@ npm run borrar-ejemplos
 | `/refund <user_id> <charge_id>` | Devuelve el pago con `refundStarPayment`, cancela la renovación y retira el premium |
 | `/canal_ahora` | Publica una pregunta en el canal al momento (para probar) |
 | `/canal_stats` | Preguntas publicadas en el canal y usuarios que han llegado desde él |
+| `/origenes` | Usuarios, premium activos y estrellas pagadas según el enlace por el que llegaron (`?start=reddit`, `?start=tiktok`…) |
 
 El `charge_id` aparece en la consola/logs cuando entra cada pago (`[PAGO] … charge_id …`) y en la tabla `payments`.
 
@@ -187,7 +188,7 @@ Todos los días a las **9:00 (hora de Madrid)** el bot publica en tu canal una e
 - **Si falla la publicación** (el bot no es administrador, `CHANNEL_ID` incorrecto, sin internet…), se registra en el log como `[CANAL]` y te llega un aviso por privado con el motivo. El bot sigue funcionando.
 - **Usuarios que llegan desde el canal:** quien entra con el botón (`/start canal`) y es nuevo en el bot queda marcado con origen `canal`. Lo ves con `/canal_stats`, junto con cuántos de ellos se han hecho premium.
 
-> Puedes usar el mismo sistema para medir otros enlaces: `https://t.me/tu_bot?start=instagram` guarda el origen `instagram`.
+> Puedes usar el mismo sistema para medir otros enlaces: `https://t.me/tu_bot?start=instagram` guarda el origen `instagram`. Con `/origenes` ves cuántos usuarios, premium y estrellas trae cada enlace. El origen solo puede tener letras, números, `_` y `-` (máx. 32).
 
 ---
 

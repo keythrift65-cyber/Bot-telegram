@@ -2,7 +2,8 @@ import { Composer, GrammyError } from "grammy";
 import { config } from "../config";
 import { countQuestions } from "../db/questions";
 import { getPayment, markRefunded, totalStarsEarned } from "../db/payments";
-import { countActivePremium, countUsers, setSubscriptionEnd } from "../db/users";
+import { countActivePremium, countUsers, getStatsBySource, setSubscriptionEnd } from "../db/users";
+import { escapeHtml } from "../services/quiz";
 import { sendUserStats } from "./stats";
 
 export const adminHandler = new Composer();
@@ -75,4 +76,30 @@ adminHandler.command("refund", async (ctx) => {
   } catch {
     /* El usuario puede haber bloqueado el bot */
   }
+});
+
+// /origenes: de dónde llegan los usuarios (enlaces https://t.me/tubot?start=<origen>)
+adminHandler.command("origenes", async (ctx) => {
+  if (!isAdmin(ctx.from?.id)) return;
+
+  const rows = getStatsBySource(new Date().toISOString());
+  const total = rows.reduce((sum, r) => sum + r.total, 0);
+  const pct = (n: number) => `${Math.round((n / total) * 100)}%`;
+  const lines = rows.map((r) => {
+    const name = r.source ? escapeHtml(r.source) : "<i>sin origen</i>";
+    return `• <b>${name}</b>: ${r.total} ${r.total === 1 ? "usuario" : "usuarios"} (${pct(r.total)}) · ${r.premium} premium · ${r.stars} ⭐`;
+  });
+
+  await ctx.reply(
+    [
+      "🧭 <b>Origen de los usuarios</b>",
+      "",
+      ...lines,
+      "",
+      `Total: <b>${total}</b> usuarios`,
+      "",
+      "<i>Premium = suscripción activa ahora. ⭐ = estrellas pagadas en total (sin reembolsos). «Sin origen» = entraron sin enlace con ?start=… o antes de medirlo.</i>",
+    ].join("\n"),
+    { parse_mode: "HTML" }
+  );
 });
