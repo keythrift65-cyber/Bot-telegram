@@ -18,9 +18,21 @@ if (!Number.isInteger(adminId)) {
   process.exit(1);
 }
 
+/** Variable de entorno opcional: devuelve undefined si no está o está vacía */
+function optional(name: string): string | undefined {
+  return process.env[name]?.trim() || undefined;
+}
+
 export const config = {
   botToken: required("BOT_TOKEN"),
   adminId,
+
+  /** Canal donde se publica la pregunta del día: "@micanal" o id numérico "-100…". Sin él, la función está desactivada */
+  channelId: optional("CHANNEL_ID"),
+  /** Usuario del bot sin "@" (para el enlace del canal). Si falta, se usa el que devuelve Telegram */
+  botUsername: optional("BOT_USERNAME")?.replace(/^@/, ""),
+  /** Hora de publicación en el canal (formato cron: minuto hora * * *) */
+  channelCron: "0 9 * * *",
 
   /** Preguntas gratuitas al día para usuarios no premium */
   freeDailyLimit: 10,

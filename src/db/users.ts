@@ -5,6 +5,7 @@ export interface User {
   name: string;
   created_at: string;
   subscription_end: string | null;
+  source: string | null;
 }
 
 /**
@@ -36,4 +37,20 @@ export function countActivePremium(nowIso: string): number {
       n: number;
     }
   ).n;
+}
+
+/** Guarda de dónde llegó el usuario, solo la primera vez (no se sobrescribe) */
+export function setSourceIfEmpty(id: number, source: string): boolean {
+  return db.prepare("UPDATE users SET source = ? WHERE id = ? AND source IS NULL").run(source, id).changes > 0;
+}
+
+/** Usuarios que llegaron desde un origen, y cuántos de ellos son premium ahora */
+export function countUsersBySource(source: string, nowIso: string): { total: number; premium: number } {
+  return db
+    .prepare(
+      `SELECT COUNT(*) AS total,
+              COALESCE(SUM(CASE WHEN subscription_end > ? THEN 1 ELSE 0 END), 0) AS premium
+       FROM users WHERE source = ?`
+    )
+    .get(nowIso, source) as { total: number; premium: number };
 }

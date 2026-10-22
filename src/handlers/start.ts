@@ -1,6 +1,8 @@
 import { Composer } from "grammy";
 import { config } from "../config";
 import { CB, mainMenuKeyboard } from "../bot/keyboards";
+import { countAnswersSince } from "../db/answers";
+import { setSourceIfEmpty } from "../db/users";
 import { isPremium } from "../services/subscription";
 
 export const startHandler = new Composer();
@@ -23,6 +25,16 @@ function welcomeText(userId: number, firstName: string): string {
 
 startHandler.command("start", async (ctx) => {
   if (!ctx.from) return;
+
+  // Enlace con origen, ej: https://t.me/tubot?start=canal -> ctx.match = "canal".
+  // Solo se apunta en usuarios nuevos (sin respuestas todavía) y nunca se sobrescribe.
+  const source = ctx.match.trim();
+  if (/^[a-zA-Z0-9_-]{1,32}$/.test(source) && countAnswersSince(ctx.from.id, "") === 0) {
+    if (setSourceIfEmpty(ctx.from.id, source.toLowerCase())) {
+      console.log(`[ORIGEN] Usuario ${ctx.from.id} llega desde "${source}"`);
+    }
+  }
+
   await ctx.reply(welcomeText(ctx.from.id, ctx.from.first_name), {
     parse_mode: "HTML",
     reply_markup: mainMenuKeyboard(),

@@ -18,7 +18,8 @@
   "license": "UNLICENSED",
   "dependencies": {
     "dotenv": "^18.0.8",
-    "grammy": "^1.46.0"
+    "grammy": "^1.46.0",
+    "node-cron": "^4.6.0"
   },
   "devDependencies": {
     "@types/node": "^22.20.5",

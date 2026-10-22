@@ -3,6 +3,7 @@ import { config } from "./config";
 import { createBot } from "./bot/bot";
 import { countQuestions } from "./db/questions";
 import { db } from "./db/database";
+import { startChannelScheduler } from "./services/channel";
 
 // Red de seguridad: registramos errores no capturados en lugar de cerrar el proceso
 process.on("unhandledRejection", (reason) => console.error("[ERROR] Promesa rechazada sin capturar:", reason));
@@ -66,8 +67,10 @@ async function main(): Promise<void> {
   await bot.start({
     allowed_updates: ["message", "callback_query", "pre_checkout_query"],
     drop_pending_updates: false,
-    onStart: (me) =>
-      console.log(`✅ Bot @${me.username} en marcha · ${questions} preguntas · admin ${config.adminId}`),
+    onStart: (me) => {
+      console.log(`✅ Bot @${me.username} en marcha · ${questions} preguntas · admin ${config.adminId}`);
+      startChannelScheduler(bot);
+    },
   });
 }
 

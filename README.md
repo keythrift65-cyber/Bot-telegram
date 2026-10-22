@@ -8,7 +8,8 @@ Bot de preguntas tipo test para preparar la oposición de Auxiliar Administrativ
 - Repaso de fallos (premium)
 - Estadísticas globales y por tema
 - Suscripción premium de 250 ⭐ cada 30 días, con renovación automática
-- Comandos de administrador: `/stats` y `/refund`
+- Pregunta del día publicada automáticamente a las 9:00 en un canal público, con enlace al bot
+- Comandos de administrador: `/stats`, `/refund`, `/canal_ahora` y `/canal_stats`
 
 Tecnología: Node.js 22.13+, TypeScript, [grammY](https://grammy.dev), SQLite (el incluido en Node, `node:sqlite`: no hay que compilar nada), long polling.
 
@@ -29,9 +30,10 @@ src/
 │   ├── stats.ts             Mis estadísticas
 │   ├── payments.ts          Premium, pre_checkout_query, successful_payment
 │   ├── info.ts              /paysupport y /terms
-│   └── admin.ts             /stats y /refund
+│   ├── admin.ts             /stats y /refund
+│   └── channel.ts           /canal_ahora y /canal_stats
 ├── db/                      SQLite: conexión, tablas y consultas
-├── services/                Lógica: fechas, test, suscripción
+├── services/                Lógica: fechas, test, suscripción, canal (channel.ts)
 └── scripts/
     ├── import-questions.ts  npm run import
     └── delete-examples.ts   npm run borrar-ejemplos
@@ -148,12 +150,48 @@ npm run borrar-ejemplos
 |---|---|
 | `/stats` | Usuarios totales, premium activos, estrellas ganadas y nº de preguntas |
 | `/refund <user_id> <charge_id>` | Devuelve el pago con `refundStarPayment`, cancela la renovación y retira el premium |
+| `/canal_ahora` | Publica una pregunta en el canal al momento (para probar) |
+| `/canal_stats` | Preguntas publicadas en el canal y usuarios que han llegado desde él |
 
 El `charge_id` aparece en la consola/logs cuando entra cada pago (`[PAGO] … charge_id …`) y en la tabla `payments`.
 
 ---
 
-## 5. Dejarlo funcionando 24/7 en un servidor Linux con pm2
+## 5. Pregunta del día en un canal
+
+Todos los días a las **9:00 (hora de Madrid)** el bot publica en tu canal una encuesta tipo *quiz* con una pregunta al azar, y justo debajo un mensaje con un botón para abrir el bot:
+
+> ¿Quieres seguir practicando? Tienes 10 preguntas gratis al día en el bot 👇  **[📝 Practicar en el bot]**
+
+### Configuración
+
+1. **Crea el canal** en Telegram (público, con un @usuario) si aún no lo tienes.
+2. **Añade el bot como administrador:** en el canal → *Administradores* → *Añadir administrador* → busca tu bot → deja activado **Publicar mensajes**.
+3. **Añade al `.env`:**
+   ```env
+   CHANNEL_ID=@tu_canal
+   BOT_USERNAME=tu_bot
+   ```
+   - `CHANNEL_ID`: el @usuario del canal (ej: `@test_auxiliar`). Si el canal es privado, usa su id numérico, que empieza por `-100` (puedes verlo reenviando un mensaje del canal a [@userinfobot](https://t.me/userinfobot)).
+   - `BOT_USERNAME`: el usuario de tu bot **sin @** (ej: `Dev_gfv_bot`). Se usa para el botón `https://t.me/tu_bot?start=canal`. Si lo dejas vacío, se usa el que devuelve Telegram.
+   - Si `CHANNEL_ID` está vacío, la publicación en el canal queda desactivada y el bot funciona igual.
+4. **Reinicia el bot** (en Windows: `detener-bot.ps1` y `Start-ScheduledTask -TaskName BotOposiciones`; con pm2: `pm2 restart bot-oposiciones`). En el log debe aparecer `📢 Pregunta del día programada a las 9:00 (Madrid) en @tu_canal`.
+5. **Pruébalo:** escribe `/canal_ahora` al bot desde tu cuenta de administrador.
+
+### Cómo funciona
+
+- **Encuesta tipo quiz anónima** con las 4 opciones desordenadas. Tras responder, el usuario ve el artículo de referencia y la explicación.
+- **Límites de Telegram:** enunciado de hasta 300 caracteres, opciones de hasta 100 y explicación de hasta 200. Las preguntas que no caben no se publican en el canal (en el bot sí se usan). Si la explicación es larga, se recorta por frases completas; si ni la primera frase cabe, se muestra solo el artículo.
+- **Sin repeticiones:** se guarda cada publicación en la tabla `channel_posts` y no se repite ninguna pregunta hasta haber publicado todas las que caben. Después empieza una vuelta nueva.
+- **Si el bot estaba apagado a las 9:00** (por ejemplo, el portátil), publica la pregunta del día en cuanto arranca, siempre que hoy no se haya publicado ya.
+- **Si falla la publicación** (el bot no es administrador, `CHANNEL_ID` incorrecto, sin internet…), se registra en el log como `[CANAL]` y te llega un aviso por privado con el motivo. El bot sigue funcionando.
+- **Usuarios que llegan desde el canal:** quien entra con el botón (`/start canal`) y es nuevo en el bot queda marcado con origen `canal`. Lo ves con `/canal_stats`, junto con cuántos de ellos se han hecho premium.
+
+> Puedes usar el mismo sistema para medir otros enlaces: `https://t.me/tu_bot?start=instagram` guarda el origen `instagram`.
+
+---
+
+## 6. Dejarlo funcionando 24/7 en un servidor Linux con pm2
 
 Ejemplo para Ubuntu/Debian (un VPS pequeño es suficiente).
 
@@ -215,7 +253,7 @@ sqlite3 data/bot.sqlite ".backup 'backup-$(date +%F).sqlite'"
 
 ---
 
-## 6. Dejarlo funcionando 24/7 en un portátil
+## 7. Dejarlo funcionando 24/7 en un portátil
 
 Con long polling no hay que abrir puertos en el router ni tener IP fija: basta con que el portátil tenga internet. El bot espera solo a que haya conexión al arrancar y se reinicia solo si se cae.
 

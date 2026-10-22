@@ -62,9 +62,29 @@ export function openDatabase(dbPath: string): DatabaseSync {
       is_recurring                INTEGER NOT NULL DEFAULT 0,  -- 1 si es una renovación automática
       refunded                    INTEGER NOT NULL DEFAULT 0
     );
+
+    -- Preguntas publicadas en el canal. "cycle" es la vuelta: cuando se han publicado
+    -- todas las preguntas, empieza una vuelta nueva y se pueden repetir.
+    CREATE TABLE IF NOT EXISTS channel_posts (
+      id          INTEGER PRIMARY KEY AUTOINCREMENT,
+      question_id INTEGER NOT NULL REFERENCES questions(id),
+      cycle       INTEGER NOT NULL,
+      posted_at   TEXT    NOT NULL
+    );
+    CREATE INDEX IF NOT EXISTS idx_channel_posts_cycle ON channel_posts (cycle, question_id);
   `);
 
+  migrate(db);
   return db;
+}
+
+/** Añade columnas nuevas a bases de datos creadas con versiones anteriores del bot */
+function migrate(db: DatabaseSync): void {
+  const userColumns = db.prepare("PRAGMA table_info(users)").all() as { name: string }[];
+  if (!userColumns.some((c) => c.name === "source")) {
+    // De dónde llegó el usuario (ej: "canal" si entró con /start canal)
+    db.exec("ALTER TABLE users ADD COLUMN source TEXT");
+  }
 }
 
 /** Conexión única que comparte todo el proyecto */

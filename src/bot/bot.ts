@@ -3,6 +3,7 @@ import { config } from "../config";
 import { upsertUser } from "../db/users";
 import { mainMenuKeyboard } from "./keyboards";
 import { adminHandler } from "../handlers/admin";
+import { channelHandler } from "../handlers/channel";
 import { infoHandler } from "../handlers/info";
 import { paymentsHandler } from "../handlers/payments";
 import { quizHandler } from "../handlers/quiz";
@@ -36,6 +37,7 @@ export function createBot(): Bot {
   bot.use(paymentsHandler);
   bot.use(infoHandler);
   bot.use(adminHandler);
+  bot.use(channelHandler);
 
   // Cualquier otro mensaje (texto libre, comando desconocido, foto…): mostramos el menú
   bot.on("message", async (ctx) => {
