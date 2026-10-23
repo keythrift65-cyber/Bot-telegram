@@ -4,11 +4,16 @@ import { upsertUser } from "../db/users";
 import { mainMenuKeyboard } from "./keyboards";
 import { adminHandler } from "../handlers/admin";
 import { channelHandler } from "../handlers/channel";
+import { examHandler } from "../handlers/exam";
 import { infoHandler } from "../handlers/info";
+import { inviteHandler } from "../handlers/invite";
 import { paymentsHandler } from "../handlers/payments";
 import { quizHandler } from "../handlers/quiz";
+import { reminderHandler } from "../handlers/reminder";
+import { reportsHandler } from "../handlers/reports";
 import { startHandler } from "../handlers/start";
 import { statsHandler } from "../handlers/stats";
+import { topicsHandler } from "../handlers/topics";
 
 /**
  * Crea el bot y registra todos los middlewares y handlers.
@@ -33,11 +38,17 @@ export function createBot(): Bot {
 
   bot.use(startHandler);
   bot.use(quizHandler);
+  bot.use(topicsHandler);
+  bot.use(examHandler);
   bot.use(statsHandler);
+  bot.use(reminderHandler);
+  bot.use(inviteHandler);
   bot.use(paymentsHandler);
   bot.use(infoHandler);
   bot.use(adminHandler);
   bot.use(channelHandler);
+  // Debe ir antes del menú final: recoge el comentario de "Reportar error"
+  bot.use(reportsHandler);
 
   // Cualquier otro mensaje (texto libre, comando desconocido, foto…): mostramos el menú
   bot.on("message", async (ctx) => {

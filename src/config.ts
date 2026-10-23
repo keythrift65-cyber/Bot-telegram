@@ -1,4 +1,5 @@
 import "dotenv/config";
+import { TIME_ZONE } from "./services/time";
 
 /**
  * Lee una variable de entorno obligatoria y detiene el proceso si falta.
@@ -43,5 +44,23 @@ export const config = {
   /** Días durante los que no se repite una pregunta ya respondida */
   noRepeatDays: 7,
   /** Zona horaria para reiniciar el contador diario */
-  timeZone: "Europe/Madrid",
+  timeZone: TIME_ZONE,
+
+  /** Respuestas mínimas de una pregunta para mostrar qué porcentaje de usuarios la acierta */
+  minAnswersForQuestionStats: 5,
+
+  /** Tamaños de simulacro que se pueden elegir (premium) */
+  examSizes: [10, 25, 50],
+  /** Cuánto resta cada fallo en el simulacro (1/3 de acierto, como en el examen de la AGE) */
+  examPenalty: 1 / 3,
+
+  /** Horas (Madrid) que se pueden elegir para el recordatorio diario */
+  reminderHours: [9, 14, 18, 21],
+
+  /** Preguntas extra para quien invita cuando su amigo responde sus primeras preguntas */
+  referralBonus: 10,
+  /** Preguntas extra de bienvenida para quien entra invitado por un amigo */
+  referralWelcomeBonus: 5,
+  /** Preguntas que tiene que responder el amigo para que cuente la invitación */
+  referralRequiredAnswers: 5,
 } as const;

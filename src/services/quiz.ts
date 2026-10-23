@@ -1,11 +1,27 @@
 import { config } from "../config";
-import { countAnswersSince } from "../db/answers";
+import { countAnswersOnDay } from "../db/answers";
 import { LETTERS, optionsOf, type Question } from "../db/questions";
+import { getUser } from "../db/users";
 import { isPremium } from "./subscription";
-import { startOfTodayIn } from "./time";
+import { madridDay } from "./time";
 
-/** Modo de juego: "n" = nueva pregunta, "r" = repaso de fallos */
-export type QuizMode = "n" | "r";
+/**
+ * Modo de práctica, que viaja en los botones:
+ *   "n"     → pregunta nueva al azar
+ *   "r"     → repaso de fallos (premium)
+ *   "t<id>" → pregunta del tema con ese id (ej: "t3")
+ */
+export type QuizMode = { kind: "n" } | { kind: "r" } | { kind: "t"; topicId: number };
+
+export function encodeMode(mode: QuizMode): string {
+  return mode.kind === "t" ? `t${mode.topicId}` : mode.kind;
+}
+
+export function parseMode(text: string): QuizMode | null {
+  if (text === "n" || text === "r") return { kind: text };
+  const m = text.match(/^t(\d{1,9})$/);
+  return m ? { kind: "t", topicId: Number(m[1]) } : null;
+}
 
 /**
  * Orden en que se muestran las opciones. order[i] es el índice original (0=A … 3=D)
@@ -44,33 +60,59 @@ export function escapeHtml(text: string): string {
   return text.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
 }
 
-/** Texto de la pregunta con las opciones ya desordenadas */
-export function formatQuestion(q: Question, order: Order, mode: QuizMode): string {
-  const options = optionsOf(q);
-  const header = mode === "r" ? "🔁 <b>Repaso de fallos</b>" : "📝 <b>Nueva pregunta</b>";
-  const lines = order.map((orig, pos) => `<b>${LETTERS[pos]})</b> ${escapeHtml(options[orig])}`);
-  return [
-    header,
-    `<i>${escapeHtml(q.topic)}</i>`,
-    "",
-    `<b>${escapeHtml(q.statement)}</b>`,
-    "",
-    ...lines,
-  ].join("\n");
+/** Cabecera de la pregunta según el modo */
+export function modeHeader(mode: QuizMode): string {
+  if (mode.kind === "r") return "🔁 <b>Repaso de fallos</b>";
+  if (mode.kind === "t") return "📚 <b>Practicando por tema</b>";
+  return "📝 <b>Pregunta</b>";
 }
 
-/** Texto que sustituye a la pregunta una vez respondida */
-export function formatResult(q: Question, order: Order, chosenPos: number): string {
+/** Texto de la pregunta con las opciones ya desordenadas */
+export function formatQuestion(q: Question, order: Order, header: string): string {
+  const options = optionsOf(q);
+  const lines = order.map((orig, pos) => `<b>${LETTERS[pos]})</b> ${escapeHtml(options[orig])}`);
+  return [header, `<i>${escapeHtml(q.topic)}</i>`, "", `<b>${escapeHtml(q.statement)}</b>`, "", ...lines].join("\n");
+}
+
+/**
+ * De dónde sale la pregunta: ley, Título/Capítulo/Sección y artículo, y el examen
+ * oficial en el que apareció si se conoce.
+ */
+export function formatSource(q: Question): string[] {
+  const location = q.location.split("\n").filter(Boolean);
+  const showReference = q.reference && q.reference !== q.law;
+  // Preguntas importadas con versiones antiguas: solo tienen el artículo
+  if (!q.law && location.length === 0) {
+    const lines = showReference ? [`📖 ${escapeHtml(q.reference)}`] : [];
+    if (q.exam) lines.push(`🏛️ Apareció en: <b>${escapeHtml(q.exam)}</b>`);
+    return lines;
+  }
+
+  const lines = ["📚 <b>De dónde sale</b>"];
+  if (q.law) lines.push(escapeHtml(q.law));
+  for (const level of location) lines.push(`› ${escapeHtml(level)}`);
+  if (showReference) lines.push(`› <b>${escapeHtml(q.reference)}</b>`);
+  if (q.exam) lines.push(`🏛️ Apareció en: <b>${escapeHtml(q.exam)}</b>`);
+  return lines;
+}
+
+/** Marca de cada opción tras responder */
+function optionLines(q: Question, order: Order, chosenPos: number | null): string[] {
   const options = optionsOf(q);
   const rightPos = correctPosition(q, order);
-  const isCorrect = chosenPos === rightPos;
-
-  const lines = order.map((orig, pos) => {
+  return order.map((orig, pos) => {
     let mark = "▫️";
     if (pos === rightPos) mark = "✅";
     else if (pos === chosenPos) mark = "❌";
     return `${mark} <b>${LETTERS[pos]})</b> ${escapeHtml(options[orig])}`;
   });
+}
+
+/** Texto que sustituye a la pregunta una vez respondida */
+export function formatResult(q: Question, order: Order, chosenPos: number, footer: string[] = []): string {
+  const options = optionsOf(q);
+  const rightPos = correctPosition(q, order);
+  const isCorrect = chosenPos === rightPos;
 
   const result = [
     isCorrect ? "🎉 <b>¡Correcto!</b>" : "😕 <b>Has fallado</b>",
@@ -78,18 +120,53 @@ export function formatResult(q: Question, order: Order, chosenPos: number): stri
     "",
     `<b>${escapeHtml(q.statement)}</b>`,
     "",
-    ...lines,
+    ...optionLines(q, order, chosenPos),
     "",
     `Respuesta correcta: <b>${LETTERS[rightPos]}) ${escapeHtml(options[order[rightPos]])}</b>`,
   ];
-  if (q.reference) result.push(`📖 ${escapeHtml(q.reference)}`);
   if (q.explanation) result.push(`💡 ${escapeHtml(q.explanation)}`);
+
+  const source = formatSource(q);
+  if (source.length > 0) result.push("", ...source);
+  if (footer.length > 0) result.push("", ...footer);
   return result.join("\n");
 }
 
-/** Preguntas gratuitas que le quedan hoy al usuario (Infinity si es premium) */
-export function remainingFreeToday(userId: number): number {
-  if (isPremium(userId)) return Infinity;
-  const since = startOfTodayIn(config.timeZone).toISOString();
-  return Math.max(0, config.freeDailyLimit - countAnswersSince(userId, since));
+/** Línea con el porcentaje de usuarios que acierta la pregunta (si hay respuestas suficientes) */
+export function successLine(stats: { total: number; correct: number }): string | null {
+  if (stats.total < config.minAnswersForQuestionStats) return null;
+  const pct = Math.round((stats.correct / stats.total) * 100);
+  return `👥 El <b>${pct}%</b> de los usuarios acierta esta pregunta`;
+}
+
+// ---------------------------------------------------------------------------
+// Cupo diario
+// ---------------------------------------------------------------------------
+
+export interface Quota {
+  premium: boolean;
+  /** Preguntas respondidas hoy */
+  usedToday: number;
+  /** Preguntas gratis que quedan hoy */
+  freeLeft: number;
+  /** Preguntas extra conseguidas invitando a amigos */
+  bonus: number;
+  /** Total que puede responder ahora (Infinity si es premium) */
+  remaining: number;
+}
+
+/** Cuántas preguntas puede responder hoy el usuario */
+export function getQuota(userId: number): Quota {
+  const premium = isPremium(userId);
+  const usedToday = countAnswersOnDay(userId, madridDay());
+  const freeLeft = Math.max(0, config.freeDailyLimit - usedToday);
+  const bonus = getUser(userId)?.bonus_questions ?? 0;
+  return { premium, usedToday, freeLeft, bonus, remaining: premium ? Infinity : freeLeft + bonus };
+}
+
+/** Texto corto del cupo para el pie de las respuestas, ej: "Te quedan 6 de 10 preguntas gratis hoy" */
+export function quotaLine(quota: Quota): string | null {
+  if (quota.premium) return null;
+  const extra = quota.bonus > 0 ? ` (+${quota.bonus} extra)` : "";
+  return `Te quedan <b>${quota.freeLeft}</b> de ${config.freeDailyLimit} preguntas gratis hoy${extra}`;
 }

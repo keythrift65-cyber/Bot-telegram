@@ -1,41 +1,59 @@
 import { Composer } from "grammy";
 import { config } from "../config";
 import { CB, mainMenuKeyboard } from "../bot/keyboards";
-import { countAnswersSince } from "../db/answers";
+import { countAnswersTotal } from "../db/answers";
+import { countQuestions } from "../db/questions";
 import { setSourceIfEmpty } from "../db/users";
-import { isPremium } from "../services/subscription";
+import { getStreak, streakLine } from "../services/progress";
+import { escapeHtml, getQuota } from "../services/quiz";
+import { applyReferral, parseReferral } from "../services/referrals";
 
 export const startHandler = new Composer();
 
-function welcomeText(userId: number, firstName: string): string {
-  const plan = isPremium(userId)
-    ? "⭐ Eres <b>premium</b>: preguntas ilimitadas y repaso de fallos."
-    : `Tienes <b>${config.freeDailyLimit} preguntas gratis al día</b> (se reinician a medianoche). Con premium no hay límite.`;
+function welcomeText(userId: number, firstName: string, invited: boolean): string {
+  const quota = getQuota(userId);
+  const plan = quota.premium
+    ? "⭐ Eres <b>premium</b>: preguntas ilimitadas, repaso de fallos y simulacros."
+    : `Tienes <b>${config.freeDailyLimit} preguntas gratis al día</b> (se reinician a medianoche)${
+        quota.bonus > 0 ? ` y <b>${quota.bonus} extra</b>` : ""
+      }. Con premium no hay límite.`;
+  const questions = countQuestions();
 
-  return [
-    `👋 ¡Hola, ${firstName}!`,
+  const lines = [
+    `👋 ¡Hola, ${escapeHtml(firstName)}!`,
     "",
-    "Prepara la oposición de <b>Auxiliar Administrativo del Estado</b> con preguntas tipo test, cada una con su artículo de referencia y explicación.",
+    `Prepara la oposición de <b>Auxiliar Administrativo del Estado</b> con ${
+      questions > 0 ? `<b>${questions} preguntas</b>` : "preguntas"
+    } tipo test. Cada una te dice <b>de dónde sale</b> (Título, artículo y enlace al BOE) y por qué es la correcta.`,
     "",
     plan,
-    "",
-    "¿Qué quieres hacer?",
-  ].join("\n");
+  ];
+  if (invited) lines.push(`🎁 Has entrado con la invitación de un amigo: tienes <b>${config.referralWelcomeBonus} preguntas extra</b>.`);
+  const streak = streakLine(getStreak(userId));
+  if (streak) lines.push(streak);
+  lines.push("", "¿Qué quieres hacer?");
+  return lines.join("\n");
 }
 
 startHandler.command("start", async (ctx) => {
   if (!ctx.from) return;
+  const userId = ctx.from.id;
 
-  // Enlace con origen, ej: https://t.me/tubot?start=canal -> ctx.match = "canal".
-  // Solo se apunta en usuarios nuevos (sin respuestas todavía) y nunca se sobrescribe.
-  const source = ctx.match.trim();
-  if (/^[a-zA-Z0-9_-]{1,32}$/.test(source) && countAnswersSince(ctx.from.id, "") === 0) {
-    if (setSourceIfEmpty(ctx.from.id, source.toLowerCase())) {
-      console.log(`[ORIGEN] Usuario ${ctx.from.id} llega desde "${source}"`);
+  // Enlaces con origen: https://t.me/tubot?start=canal → ctx.match = "canal".
+  // Invitaciones: https://t.me/tubot?start=ref_123 → le invitó el usuario 123.
+  // Solo cuentan para usuarios nuevos (sin respuestas todavía) y nunca se sobrescriben.
+  const payload = ctx.match.trim();
+  let invited = false;
+  const referrerId = parseReferral(payload);
+  if (referrerId !== null) {
+    invited = applyReferral(userId, referrerId);
+  } else if (/^[a-zA-Z0-9_-]{1,32}$/.test(payload) && countAnswersTotal(userId) === 0) {
+    if (setSourceIfEmpty(userId, payload.toLowerCase())) {
+      console.log(`[ORIGEN] Usuario ${userId} llega desde "${payload}"`);
     }
   }
 
-  await ctx.reply(welcomeText(ctx.from.id, ctx.from.first_name), {
+  await ctx.reply(welcomeText(userId, ctx.from.first_name, invited), {
     parse_mode: "HTML",
     reply_markup: mainMenuKeyboard(),
   });

@@ -11,8 +11,8 @@ export const channelHandler = new Composer();
 const isAdmin = (id: number | undefined) => id === config.adminId;
 
 // /canal_ahora: publica una pregunta en el canal al momento (para probar)
-channelHandler.command("canal_ahora", async (ctx) => {
-  if (!isAdmin(ctx.from?.id)) return;
+channelHandler.command("canal_ahora", async (ctx, next) => {
+  if (!isAdmin(ctx.from?.id)) return next();
   if (!config.channelId) {
     await ctx.reply("⚠️ Falta CHANNEL_ID en el .env. Añádelo y reinicia el bot.");
     return;
@@ -28,8 +28,8 @@ channelHandler.command("canal_ahora", async (ctx) => {
 });
 
 // /canal_stats: publicaciones hechas y usuarios que han llegado desde el canal
-channelHandler.command("canal_stats", async (ctx) => {
-  if (!isAdmin(ctx.from?.id)) return;
+channelHandler.command("canal_stats", async (ctx, next) => {
+  if (!isAdmin(ctx.from?.id)) return next();
 
   const cycle = currentCycle();
   const posts = getChannelPostStats(cycle);

@@ -12,15 +12,15 @@ export function getUnpostedQuestions(cycle: number): Question[] {
   return db
     .prepare(
       `SELECT * FROM questions
-       WHERE id NOT IN (SELECT question_id FROM channel_posts WHERE cycle = ?)
+       WHERE active = 1 AND id NOT IN (SELECT question_id FROM channel_posts WHERE cycle = ?)
        ORDER BY RANDOM()`
     )
     .all(cycle) as unknown as Question[];
 }
 
-/** Todas las preguntas en orden aleatorio (para empezar una vuelta nueva) */
+/** Todas las preguntas activas en orden aleatorio (para empezar una vuelta nueva) */
 export function getAllQuestionsShuffled(): Question[] {
-  return db.prepare("SELECT * FROM questions ORDER BY RANDOM()").all() as unknown as Question[];
+  return db.prepare("SELECT * FROM questions WHERE active = 1 ORDER BY RANDOM()").all() as unknown as Question[];
 }
 
 export function saveChannelPost(questionId: number, cycle: number): void {

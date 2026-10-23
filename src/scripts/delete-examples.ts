@@ -1,7 +1,7 @@
 /**
  * Borra de la base de datos las preguntas de ejemplo (las que empiezan por
  * "[EJEMPLO - REVISAR]"), las respuestas que los usuarios hayan dado a ellas
- * y sus publicaciones en el canal.
+ * y todo lo que dependa de ellas (canal, simulacros y reportes).
  *
  * Uso: npm run borrar-ejemplos
  */
@@ -14,6 +14,8 @@ db.exec("BEGIN");
 try {
   const answers = db.prepare(`DELETE FROM answers WHERE question_id IN (${EXAMPLE_FILTER})`).run();
   db.prepare(`DELETE FROM channel_posts WHERE question_id IN (${EXAMPLE_FILTER})`).run();
+  db.prepare(`DELETE FROM exam_questions WHERE question_id IN (${EXAMPLE_FILTER})`).run();
+  db.prepare(`DELETE FROM reports WHERE question_id IN (${EXAMPLE_FILTER})`).run();
   const questions = db.prepare(`DELETE FROM questions WHERE id IN (${EXAMPLE_FILTER})`).run();
   db.exec("COMMIT");
   console.log(`🗑️ Preguntas de ejemplo borradas: ${questions.changes} (y ${answers.changes} respuestas a ellas)`);

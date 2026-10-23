@@ -26,8 +26,9 @@ async function showPremium(ctx: Context): Promise<void> {
     [
       "⭐ <b>Hazte premium</b>",
       "",
-      "• Preguntas <b>ilimitadas</b> cada día",
+      "• Preguntas <b>ilimitadas</b> cada día, también por temas",
       "• <b>Repasar fallos</b>: practica las preguntas que has fallado hasta acertarlas",
+      "• <b>Simulacros de examen</b> con nota, penalización por fallo y corrección final",
       "• Estadísticas por tema para saber dónde flojeas",
       "",
       `Precio: <b>${config.premiumPriceStars} ⭐ al mes</b>. Se renueva automáticamente cada 30 días y puedes cancelarla cuando quieras.`,

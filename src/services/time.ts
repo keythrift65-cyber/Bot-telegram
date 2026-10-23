@@ -4,6 +4,9 @@
  * cambio de horario de verano/invierno).
  */
 
+/** Zona horaria del bot: el día empieza a medianoche en la España peninsular */
+export const TIME_ZONE = "Europe/Madrid";
+
 /** Desfase en minutos de una zona horaria respecto a UTC en un instante dado */
 function offsetMinutes(timeZone: string, date: Date): number {
   const part = new Intl.DateTimeFormat("en-US", { timeZone, timeZoneName: "longOffset" })
@@ -36,6 +39,34 @@ export function startOfTodayIn(timeZone: string, now = new Date()): Date {
   let guess = midnightAsUtc - offsetMinutes(timeZone, now) * 60_000;
   guess = midnightAsUtc - offsetMinutes(timeZone, new Date(guess)) * 60_000;
   return new Date(guess);
+}
+
+/** Día del calendario en la zona horaria indicada, en formato "AAAA-MM-DD" (ej: "2026-10-23") */
+export function dayIn(timeZone: string, date = new Date()): string {
+  return new Intl.DateTimeFormat("en-CA", {
+    timeZone,
+    year: "numeric",
+    month: "2-digit",
+    day: "2-digit",
+  }).format(date);
+}
+
+/** Día del calendario de Madrid ("AAAA-MM-DD") de una fecha; por defecto, hoy */
+export function madridDay(date = new Date()): string {
+  return dayIn(TIME_ZONE, date);
+}
+
+/** Hora (0-23) en la zona horaria indicada */
+export function hourIn(timeZone: string, date = new Date()): number {
+  return Number(
+    new Intl.DateTimeFormat("en-GB", { timeZone, hour: "2-digit", hourCycle: "h23" }).format(date)
+  );
+}
+
+/** Convierte "AAAA-MM-DD" en un número de día (sirve para saber si dos días son consecutivos) */
+export function dayNumber(day: string): number {
+  const [y, m, d] = day.split("-").map(Number);
+  return Math.round(Date.UTC(y, m - 1, d) / 86_400_000);
 }
 
 /** Fecha de hace N días */

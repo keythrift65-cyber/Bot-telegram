@@ -2,14 +2,24 @@
 
 Bot de preguntas tipo test para preparar la oposición de Auxiliar Administrativo del Estado (España). Se monetiza con una suscripción mensual en **Telegram Stars**.
 
-- 10 preguntas gratis al día (se reinician a medianoche, hora de Madrid)
-- Opciones desordenadas en cada pregunta, sin repetir preguntas respondidas en los últimos 7 días
-- Corrección con artículo de referencia y explicación
-- Repaso de fallos (premium)
-- Estadísticas globales y por tema
-- Suscripción premium de 250 ⭐ cada 30 días, con renovación automática
-- Pregunta del día publicada automáticamente a las 9:00 en un canal público, con enlace al bot
-- Comandos de administrador: `/stats`, `/refund`, `/canal_ahora`, `/canal_stats` y `/origenes`
+**Para el opositor**
+
+- 📝 **Preguntas tipo test** con las opciones desordenadas cada vez y sin repetir las respondidas en los últimos 7 días. 10 gratis al día (se reinician a medianoche, hora de Madrid).
+- 📚 **De dónde sale cada pregunta**: ley, Título, Capítulo, Sección y artículo, con botón para leer el artículo en el BOE. También el examen oficial en el que apareció, si se indica.
+- 💡 Corrección con la explicación y el porcentaje de usuarios que acierta cada pregunta.
+- 📚 **Practicar por temas** (Títulos de la Constitución…), viendo el porcentaje de acierto de cada tema.
+- 🎓 **Simulacros de examen** de 10, 25 o 50 preguntas (premium): sin corrección hasta el final, con preguntas en blanco, penalización por fallo, nota, tiempo, temas a reforzar y corrección.
+- 🔁 **Repaso de fallos** (premium): las preguntas falladas que aún no se han acertado.
+- 📊 **Estadísticas**: racha de días seguidos 🔥, acierto global y por tema (del más flojo al más fuerte), parte del temario vista, últimos simulacros.
+- ⏰ **Recordatorio diario** opcional a la hora que elija, solo si ese día aún no ha practicado.
+- 🎁 **Invitar amigos**: enlace personal; el amigo empieza con 5 preguntas extra y quien invita gana 10 cuando el amigo responde sus 5 primeras.
+- ⚠️ **Reportar errores** en cualquier pregunta; te llegan por privado.
+
+**Para ti (administrador)**
+
+- ⭐ Suscripción premium de 250 ⭐ cada 30 días en Telegram Stars, con renovación automática y reembolsos.
+- 📢 Pregunta del día publicada automáticamente a las 9:00 en un canal público, con enlace al bot.
+- 🛠 Comandos: `/stats`, `/origenes`, `/anuncio`, `/reportes`, `/resuelto`, `/ver`, `/refund`, `/canal_ahora` y `/canal_stats`.
 
 Tecnología: Node.js 22.13+, TypeScript, [grammY](https://grammy.dev), SQLite (el incluido en Node, `node:sqlite`: no hay que compilar nada), long polling.
 
@@ -25,15 +35,29 @@ src/
 │   ├── bot.ts               Crea el bot, middlewares, handlers y bot.catch
 │   └── keyboards.ts         Botones inline
 ├── handlers/
-│   ├── start.ts             /start y menú
-│   ├── quiz.ts              Nueva pregunta, responder, repasar fallos
+│   ├── start.ts             /start, menú, enlaces de origen e invitaciones
+│   ├── quiz.ts              Nueva pregunta, responder, repasar fallos, pregunta de un tema
+│   ├── topics.ts            Menú "Por temas"
+│   ├── exam.ts              Simulacros de examen
 │   ├── stats.ts             Mis estadísticas
+│   ├── reminder.ts          Recordatorio diario
+│   ├── invite.ts            Invitar amigos
+│   ├── reports.ts           Reportar errores, /reportes y /resuelto
 │   ├── payments.ts          Premium, pre_checkout_query, successful_payment
 │   ├── info.ts              /paysupport y /terms
-│   ├── admin.ts             /stats y /refund
+│   ├── admin.ts             /stats, /refund, /origenes, /ver y /anuncio
 │   └── channel.ts           /canal_ahora y /canal_stats
-├── db/                      SQLite: conexión, tablas y consultas
-├── services/                Lógica: fechas, test, suscripción, canal (channel.ts)
+├── db/                      SQLite: conexión, tablas, migraciones y consultas
+├── services/
+│   ├── sources.ts           De dónde sale cada pregunta: estructura de la CE y enlaces al BOE
+│   ├── quiz.ts              Formato de preguntas y cupo diario
+│   ├── exam.ts              Simulacros: nota, resumen y corrección
+│   ├── progress.ts          Racha de días seguidos
+│   ├── referrals.ts         Invitaciones y preguntas extra
+│   ├── reminders.ts         Recordatorios (cada hora en punto)
+│   ├── channel.ts           Pregunta del día en el canal
+│   ├── messaging.ts         Envíos seguros (detecta quien ha bloqueado el bot)
+│   └── time.ts, subscription.ts
 └── scripts/
     ├── import-questions.ts  npm run import
     └── delete-examples.ts   npm run borrar-ejemplos
@@ -94,12 +118,14 @@ La base de datos se crea sola en `data/bot.sqlite` la primera vez.
 
 ## 3. Importar preguntas
 
-Las preguntas están en la carpeta **`preguntas/`**, en uno o varios archivos `.json` (por ejemplo, uno por bloque del temario). Cada archivo es una lista de preguntas con este formato:
+Las preguntas están en la carpeta **`preguntas/`**, en uno o varios archivos `.json` (por ejemplo, uno por bloque del temario). Ahora mismo hay **289 preguntas de la Constitución** en 5 bloques. Cada archivo es una lista de preguntas con este formato:
 
 ```json
 [
   {
-    "tema": "Constitución Española",
+    "id": "CE-004",
+    "ley": "Constitución Española",
+    "tema": "Título Preliminar",
     "enunciado": "¿Cuál es la forma política del Estado español según el artículo 1.3?",
     "opcion_a": "Monarquía constitucional",
     "opcion_b": "Estado social y democrático de Derecho",
@@ -112,21 +138,34 @@ Las preguntas están en la carpeta **`preguntas/`**, en uno o varios archivos `.
 ]
 ```
 
-- `tema`, `enunciado`, las 4 opciones y `correcta` son obligatorios. `articulo` y `explicacion` son opcionales pero muy recomendables.
-- También se admiten las opciones agrupadas: `"opciones": { "A": "...", "B": "...", "C": "...", "D": "..." }`.
-- No importa el orden de las opciones: el bot las desordena cada vez que muestra la pregunta.
-- El `tema` es lo que aparece en "Mis estadísticas" (porcentaje de acierto por tema).
+| Campo | ¿Obligatorio? | Para qué sirve |
+|---|---|---|
+| `id` | Muy recomendable | Identificador único y estable (ej: `CE-004`). Con él, si corriges una pregunta y vuelves a importar, **se actualiza** en vez de duplicarse y se conservan las estadísticas. No lo cambies una vez importada. |
+| `enunciado`, `opcion_a`…`opcion_d`, `correcta` | Sí | La pregunta, sus 4 opciones y la letra correcta (A-D). También vale `"opciones": { "A": "…", … }`. El orden da igual: el bot las desordena. |
+| `ley` | Recomendable | Norma de la que sale. Si falta, se deduce del artículo (`… CE`, `… Ley 39/2015`…). |
+| `tema` | Opcional | Agrupa las preguntas en "Por temas" y en las estadísticas. **En la Constitución se calcula solo** según el Título del artículo. |
+| `articulo` | Recomendable | Artículo de referencia (ej: `Art. 17.2 CE`). Con él se calcula **de dónde sale** (Título, Capítulo, Sección) y el **enlace al BOE**. |
+| `explicacion` | Recomendable | Por qué es la correcta. |
+| `ubicacion` | Opcional | Para leyes que no son la CE: lista con la ubicación, ej: `["Título II", "Capítulo I"]`. |
+| `enlace` | Opcional | Enlace al texto oficial, si quieres uno concreto (debe empezar por `https://`). |
+| `examen` | Opcional | Examen oficial en el que apareció la pregunta (ej: `"Auxiliar AGE 2023"`). Se muestra al corregir. |
+| `enunciado_anterior` | Opcional | Si reescribes el enunciado de una pregunta importada **sin `id`**, pon aquí el antiguo para que se reconozca y no se duplique. |
+
+Los enlaces al BOE se calculan para la Constitución, la Ley 39/2015, la Ley 40/2015 y el TREBEP (ver `src/services/sources.ts` para añadir más leyes).
 
 Para importar:
 
 ```bash
-npm run import                               # lee todos los .json de la carpeta preguntas/
+npm run import                               # sincroniza todos los .json de la carpeta preguntas/
 npm run import -- ruta/a/archivo.json        # solo los archivos que indiques
+npm run import -- --limpiar                  # además retira las preguntas antiguas sin "id" que ya no están en ningún archivo
 ```
 
-- Una pregunta con el **mismo tema y enunciado** que otra ya existente se ignora, así que puedes volver a importar los mismos archivos sin crear duplicados. Para añadir un bloque nuevo, deja su `.json` en `preguntas/` y ejecuta `npm run import`.
-- Si alguna pregunta tiene un error de formato, no se importa nada y se indica en qué archivo y pregunta está.
-- Se puede importar con el bot en marcha; las preguntas nuevas aparecen al momento.
+- **No crea duplicados**: las preguntas se reconocen por su `id` (o, si no lo tienen, por su enunciado). Volver a importar actualiza las que hayas corregido y deja igual el resto.
+- **Retira, no borra**: al importar la carpeta entera, las preguntas con `id` que ya no estén en ningún archivo dejan de preguntarse, pero sus estadísticas se conservan. Si vuelves a ponerlas, se reactivan.
+- Si alguna pregunta tiene un error de formato o un `id` repetido, no se importa nada y se indica en qué archivo y pregunta está.
+- Avisa de las preguntas que no caben en las encuestas del canal (enunciado de más de 300 caracteres u opciones de más de 100).
+- Se puede importar con el bot en marcha; los cambios se ven al momento.
 
 Si importaste las 5 preguntas de ejemplo de versiones anteriores (las que empiezan por "[EJEMPLO - REVISAR]"), bórralas con:
 
@@ -148,7 +187,11 @@ npm run borrar-ejemplos
 
 | Comando | Qué hace |
 |---|---|
-| `/stats` | Usuarios totales, premium activos, estrellas ganadas y nº de preguntas |
+| `/stats` | Usuarios (totales, activos hoy y en 7 días, bloqueados), premium, estrellas, respuestas, simulacros, reportes y preguntas por ley |
+| `/anuncio <texto>` | Envía un mensaje a todos los usuarios (enseña una vista previa y pide confirmación). Se envía poco a poco, sin bloquear el bot, y al terminar te dice cuántos lo recibieron |
+| `/reportes` | Errores que han reportado los usuarios y están pendientes |
+| `/resuelto <número>` | Marca un reporte como revisado y da las gracias a quien lo envió |
+| `/ver <id>` | Ficha completa de una pregunta (ej: `/ver CE-017`): opciones, explicación, de dónde sale, % de acierto y reportes |
 | `/refund <user_id> <charge_id>` | Devuelve el pago con `refundStarPayment`, cancela la renovación y retira el premium |
 | `/canal_ahora` | Publica una pregunta en el canal al momento (para probar) |
 | `/canal_stats` | Preguntas publicadas en el canal y usuarios que han llegado desde él |
@@ -317,6 +360,6 @@ utaot-telegram
 
 ## ⚙️ Ajustes
 
-Precio, límite diario, días sin repetir y zona horaria están en `src/config.ts`. Tras cambiarlos: `npm run build` y `pm2 restart bot-oposiciones`.
+En `src/config.ts` están el precio, el límite diario, los días sin repetir, la zona horaria, los tamaños de simulacro y la penalización por fallo (1/3), las horas posibles del recordatorio y las preguntas extra por invitar amigos. Tras cambiarlos, reinicia el bot (en Windows vuelve a ejecutar `scripts\windows\instalar-inicio.ps1`, que compila y reinicia; con pm2: `npm run build` y `pm2 restart bot-oposiciones`).
 
 > Si cambias el precio, reinicia el bot: el enlace de pago se genera una vez y se guarda en memoria.

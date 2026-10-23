@@ -4,6 +4,7 @@ import { createBot } from "./bot/bot";
 import { countQuestions } from "./db/questions";
 import { db } from "./db/database";
 import { startChannelScheduler } from "./services/channel";
+import { startReminderScheduler } from "./services/reminders";
 
 // Red de seguridad: registramos errores no capturados en lugar de cerrar el proceso
 process.on("unhandledRejection", (reason) => console.error("[ERROR] Promesa rechazada sin capturar:", reason));
@@ -43,8 +44,12 @@ async function main(): Promise<void> {
   await bot.api.setMyCommands([
     { command: "start", description: "Menú principal" },
     { command: "pregunta", description: "Nueva pregunta" },
+    { command: "temas", description: "Practicar por temas" },
     { command: "repaso", description: "Repasar fallos (premium)" },
+    { command: "simulacro", description: "Simulacro de examen (premium)" },
     { command: "estadisticas", description: "Mis estadísticas" },
+    { command: "invitar", description: "Invitar amigos y ganar preguntas extra" },
+    { command: "recordatorio", description: "Recordatorio diario" },
     { command: "premium", description: "Hazte premium" },
     { command: "paysupport", description: "Ayuda con pagos" },
     { command: "terms", description: "Condiciones de uso" },
@@ -70,6 +75,7 @@ async function main(): Promise<void> {
     onStart: (me) => {
       console.log(`✅ Bot @${me.username} en marcha · ${questions} preguntas · admin ${config.adminId}`);
       startChannelScheduler(bot);
+      startReminderScheduler(bot);
     },
   });
 }

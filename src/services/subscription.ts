@@ -23,7 +23,7 @@ export async function getPremiumInvoiceLink(api: Api): Promise<string> {
 
   cachedInvoiceLink = await api.createInvoiceLink(
     "Premium Oposiciones Auxiliar",
-    "Preguntas ilimitadas y repaso de fallos durante 30 días. Se renueva automáticamente cada mes; puedes cancelarla cuando quieras.",
+    "Preguntas ilimitadas, repaso de fallos y simulacros de examen durante 30 días. Se renueva automáticamente cada mes; puedes cancelarla cuando quieras.",
     PREMIUM_PAYLOAD,
     "", // provider_token vacío para Telegram Stars
     "XTR",

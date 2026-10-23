@@ -10,7 +10,7 @@ import {
 } from "../db/channel";
 import { optionsOf, type Question } from "../db/questions";
 import { correctPosition, shuffledOrder } from "./quiz";
-import { startOfTodayIn } from "./time";
+import { hourIn, startOfTodayIn } from "./time";
 
 /** Límites de Telegram para las encuestas */
 const MAX_QUESTION = 300;
@@ -177,15 +177,6 @@ export async function publishAndReport(
   }
 }
 
-/** Hora actual en Madrid (0-23) */
-function madridHour(): number {
-  return Number(
-    new Intl.DateTimeFormat("en-GB", { timeZone: config.timeZone, hour: "2-digit", hourCycle: "h23" }).format(
-      new Date()
-    )
-  );
-}
-
 /**
  * Programa la publicación diaria a las 9:00 (Europe/Madrid).
  * Además, si el bot arranca después de las 9:00 y hoy todavía no se ha publicado
@@ -206,7 +197,7 @@ export function startChannelScheduler(bot: Bot): void {
   console.log(`📢 Pregunta del día programada a las 9:00 (Madrid) en ${config.channelId}`);
 
   const postedToday = countChannelPostsSince(startOfTodayIn(config.timeZone).toISOString()) > 0;
-  if (madridHour() >= 9 && !postedToday) {
+  if (hourIn(config.timeZone) >= 9 && !postedToday) {
     void publishAndReport(bot.api, username, "recuperada: el bot no estaba encendido a las 9:00");
   }
 }
