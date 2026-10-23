@@ -3,10 +3,12 @@ import { config } from "../config";
 import { CB, mainMenuKeyboard } from "../bot/keyboards";
 import { countAnswersTotal } from "../db/answers";
 import { countQuestions } from "../db/questions";
+import { listLaws } from "../db/topics";
 import { setSourceIfEmpty } from "../db/users";
 import { getStreak, streakLine } from "../services/progress";
 import { escapeHtml, getQuota } from "../services/quiz";
 import { applyReferral, parseReferral } from "../services/referrals";
+import { lawLabel } from "../services/sources";
 
 export const startHandler = new Composer();
 
@@ -18,13 +20,17 @@ function welcomeText(userId: number, firstName: string, invited: boolean): strin
         quota.bonus > 0 ? ` y <b>${quota.bonus} extra</b>` : ""
       }. Con premium no hay límite.`;
   const questions = countQuestions();
+  const laws = listLaws();
 
   const lines = [
     `👋 ¡Hola, ${escapeHtml(firstName)}!`,
     "",
     `Prepara la oposición de <b>Auxiliar Administrativo del Estado</b> con ${
       questions > 0 ? `<b>${questions} preguntas</b>` : "preguntas"
-    } tipo test. Cada una te dice <b>de dónde sale</b> (Título, artículo y enlace al BOE) y por qué es la correcta.`,
+    } tipo test${laws.length > 0 ? ":" : "."}`,
+    ...laws.map((l) => `• ${escapeHtml(lawLabel(l.law))}: <b>${l.questions}</b>`),
+    "",
+    "Cada pregunta te dice <b>de dónde sale</b> (Título, artículo y enlace al BOE) y por qué es la correcta.",
     "",
     plan,
   ];

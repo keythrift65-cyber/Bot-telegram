@@ -26,7 +26,7 @@ import {
   setSubscriptionEnd,
 } from "../db/users";
 import { sendSafely, sendToMany } from "../services/messaging";
-import { escapeHtml, formatSource } from "../services/quiz";
+import { escapeHtml, formatSource, topicLabel } from "../services/quiz";
 import { daysAgo, madridDay, startOfTodayIn } from "../services/time";
 import { sendUserStats } from "./stats";
 
@@ -158,7 +158,7 @@ adminHandler.command("ver", async (ctx, next) => {
   await ctx.reply(
     [
       `🔎 <b>Pregunta #${q.id}</b>${q.code ? ` · ${escapeHtml(q.code)}` : ""}${q.active ? "" : " · <b>RETIRADA</b>"}`,
-      `<i>${escapeHtml(q.topic)}</i>`,
+      `<i>${escapeHtml(topicLabel(q))}</i>`,
       "",
       `<b>${escapeHtml(q.statement)}</b>`,
       ...LETTERS.map((l, i) => `${l === q.correct ? "✅" : "▫️"} ${l}) ${escapeHtml(options[i])}`),

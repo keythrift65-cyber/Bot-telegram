@@ -1,7 +1,7 @@
 import { config } from "../config";
 import { createExam, listExamQuestions, type Exam, type ExamQuestion } from "../db/exams";
 import { getQuestion, getRandomQuestionIds, LETTERS, optionsOf, type Question } from "../db/questions";
-import { decodeOrder, encodeOrder, escapeHtml, shuffledOrder } from "./quiz";
+import { decodeOrder, encodeOrder, escapeHtml, shuffledOrder, topicLabel } from "./quiz";
 
 /** Crea un simulacro con preguntas al azar. Devuelve su id, o null si no hay preguntas. */
 export function createRandomExam(userId: number, size: number): number | null {
@@ -44,7 +44,7 @@ export function formatExamQuestion(q: Question, eq: ExamQuestion, total: number,
   const options = optionsOf(q);
   const lines = [
     `🎓 <b>Simulacro · Pregunta ${eq.position} de ${total}</b>`,
-    `<i>${escapeHtml(q.topic)}</i>`,
+    `<i>${escapeHtml(topicLabel(q))}</i>`,
     "",
     `<b>${escapeHtml(q.statement)}</b>`,
     "",
@@ -63,7 +63,8 @@ export function formatExamSummary(exam: Exam): string {
   // Aciertos por tema para saber qué reforzar
   const byTopic = new Map<string, { ok: number; total: number }>();
   for (const eq of answered) {
-    const topic = getQuestion(eq.question_id)?.topic ?? "Otros";
+    const q = getQuestion(eq.question_id);
+    const topic = q ? topicLabel(q) : "Otros";
     const entry = byTopic.get(topic) ?? { ok: 0, total: 0 };
     entry.total++;
     if (eq.result === "ok") entry.ok++;

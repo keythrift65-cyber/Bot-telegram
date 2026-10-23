@@ -43,7 +43,7 @@ async function showTopicsMenu(ctx: Context): Promise<void> {
     });
     return;
   }
-  await showTopics(ctx, laws[0], CB.menu);
+  await showTopics(ctx, laws[0]?.law, CB.menu);
 }
 
 topicsHandler.callbackQuery(CB.topics, async (ctx) => {
@@ -56,7 +56,7 @@ topicsHandler.command("temas", (ctx) => showTopicsMenu(ctx));
 // Temas de una ley concreta: "tl:<índice>"
 topicsHandler.callbackQuery(/^tl:(\d{1,3})$/, async (ctx) => {
   await ctx.answerCallbackQuery();
-  const law = listLaws()[Number(ctx.match[1])];
+  const law = listLaws()[Number(ctx.match[1])]?.law;
   if (!law) {
     await showTopicsMenu(ctx);
     return;

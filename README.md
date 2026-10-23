@@ -4,10 +4,10 @@ Bot de preguntas tipo test para preparar la oposición de Auxiliar Administrativ
 
 **Para el opositor**
 
-- 📝 **Preguntas tipo test** con las opciones desordenadas cada vez y sin repetir las respondidas en los últimos 7 días. 10 gratis al día (se reinician a medianoche, hora de Madrid).
+- 📝 **596 preguntas tipo test** de la Constitución (289), la Ley 39/2015 (152) y la Ley 40/2015 (155), con las opciones desordenadas cada vez y sin repetir las respondidas en los últimos 7 días. 10 gratis al día (se reinician a medianoche, hora de Madrid).
 - 📚 **De dónde sale cada pregunta**: ley, Título, Capítulo, Sección y artículo, con botón para leer el artículo en el BOE. También el examen oficial en el que apareció, si se indica.
 - 💡 Corrección con la explicación y el porcentaje de usuarios que acierta cada pregunta.
-- 📚 **Practicar por temas** (Títulos de la Constitución…), viendo el porcentaje de acierto de cada tema.
+- 📚 **Practicar por temas**: primero se elige la norma y después el tema (Títulos, y los Títulos más largos divididos en partes), viendo el porcentaje de acierto de cada tema.
 - 🎓 **Simulacros de examen** de 10, 25 o 50 preguntas (premium): sin corrección hasta el final, con preguntas en blanco, penalización por fallo, nota, tiempo, temas a reforzar y corrección.
 - 🔁 **Repaso de fallos** (premium): las preguntas falladas que aún no se han acertado.
 - 📊 **Estadísticas**: racha de días seguidos 🔥, acierto global y por tema (del más flojo al más fuerte), parte del temario vista, últimos simulacros.
@@ -49,7 +49,7 @@ src/
 │   └── channel.ts           /canal_ahora y /canal_stats
 ├── db/                      SQLite: conexión, tablas, migraciones y consultas
 ├── services/
-│   ├── sources.ts           De dónde sale cada pregunta: estructura de la CE y enlaces al BOE
+│   ├── sources.ts           De dónde sale cada pregunta: estructura de la CE, la Ley 39 y la Ley 40, y enlaces al BOE
 │   ├── quiz.ts              Formato de preguntas y cupo diario
 │   ├── exam.ts              Simulacros: nota, resumen y corrección
 │   ├── progress.ts          Racha de días seguidos
@@ -118,7 +118,15 @@ La base de datos se crea sola en `data/bot.sqlite` la primera vez.
 
 ## 3. Importar preguntas
 
-Las preguntas están en la carpeta **`preguntas/`**, en uno o varios archivos `.json` (por ejemplo, uno por bloque del temario). Ahora mismo hay **289 preguntas de la Constitución** en 5 bloques. Cada archivo es una lista de preguntas con este formato:
+Las preguntas están en la carpeta **`preguntas/`**, en uno o varios archivos `.json` (por ejemplo, uno por bloque del temario). Ahora mismo hay **596 preguntas**:
+
+| Archivo | Norma | Preguntas | Ids |
+|---|---|---|---|
+| `constitucion_bloque1.json` … `constitucion_bloque5.json` | Constitución Española | 289 | `CE-001` … `CE-289` |
+| `ley39_2015.json` | Ley 39/2015, del Procedimiento Administrativo Común | 152 | `L39-001` … `L39-152` |
+| `ley40_2015.json` | Ley 40/2015, de Régimen Jurídico del Sector Público | 155 | `L40-001` … `L40-155` |
+
+Cada archivo es una lista de preguntas con este formato:
 
 ```json
 [
@@ -143,15 +151,17 @@ Las preguntas están en la carpeta **`preguntas/`**, en uno o varios archivos `.
 | `id` | Muy recomendable | Identificador único y estable (ej: `CE-004`). Con él, si corriges una pregunta y vuelves a importar, **se actualiza** en vez de duplicarse y se conservan las estadísticas. No lo cambies una vez importada. |
 | `enunciado`, `opcion_a`…`opcion_d`, `correcta` | Sí | La pregunta, sus 4 opciones y la letra correcta (A-D). También vale `"opciones": { "A": "…", … }`. El orden da igual: el bot las desordena. |
 | `ley` | Recomendable | Norma de la que sale. Si falta, se deduce del artículo (`… CE`, `… Ley 39/2015`…). |
-| `tema` | Opcional | Agrupa las preguntas en "Por temas" y en las estadísticas. **En la Constitución se calcula solo** según el Título del artículo. |
-| `articulo` | Recomendable | Artículo de referencia (ej: `Art. 17.2 CE`). Con él se calcula **de dónde sale** (Título, Capítulo, Sección) y el **enlace al BOE**. |
+| `tema` | Opcional | Agrupa las preguntas en "Por temas" y en las estadísticas. **En la Constitución, la Ley 39/2015 y la Ley 40/2015 se calcula solo** según el Título (o la parte del Título) del artículo, si falta o si solo pone el nombre de la ley. |
+| `articulo` | Recomendable | Artículo de referencia con la ley (ej: `Art. 17.2 CE`, `Art. 21.3 Ley 39/2015`). Con él se calcula **de dónde sale** (Título, Capítulo, Sección) y el **enlace al BOE**. |
 | `explicacion` | Recomendable | Por qué es la correcta. |
-| `ubicacion` | Opcional | Para leyes que no son la CE: lista con la ubicación, ej: `["Título II", "Capítulo I"]`. |
+| `ubicacion` | Opcional | Para otras leyes: lista con la ubicación, ej: `["Título II", "Capítulo I"]`. |
 | `enlace` | Opcional | Enlace al texto oficial, si quieres uno concreto (debe empezar por `https://`). |
 | `examen` | Opcional | Examen oficial en el que apareció la pregunta (ej: `"Auxiliar AGE 2023"`). Se muestra al corregir. |
 | `enunciado_anterior` | Opcional | Si reescribes el enunciado de una pregunta importada **sin `id`**, pon aquí el antiguo para que se reconozca y no se duplique. |
 
-Los enlaces al BOE se calculan para la Constitución, la Ley 39/2015, la Ley 40/2015 y el TREBEP (ver `src/services/sources.ts` para añadir más leyes).
+La ubicación (Título, Capítulo y Sección) se calcula para la Constitución, la Ley 39/2015 y la Ley 40/2015; los enlaces al BOE, también para el TREBEP. Para añadir otra ley, ver `src/services/sources.ts`.
+
+En las encuestas del canal, el enunciado lleva delante la norma (ej: `Ley 39/2015 · Según el artículo 21.3…`) para que se sepa de qué ley es cada pregunta.
 
 Para importar:
 

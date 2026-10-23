@@ -2,6 +2,7 @@ import { config } from "../config";
 import { countAnswersOnDay } from "../db/answers";
 import { LETTERS, optionsOf, type Question } from "../db/questions";
 import { getUser } from "../db/users";
+import { findLaw } from "./sources";
 import { isPremium } from "./subscription";
 import { madridDay } from "./time";
 
@@ -60,6 +61,15 @@ export function escapeHtml(text: string): string {
   return text.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
 }
 
+/** Ley y tema de la pregunta, ej: "Ley 39/2015 · Título II · Términos y plazos" */
+export function topicLabel(q: Pick<Question, "law" | "topic">): string {
+  if (!q.law) return q.topic;
+  const law = findLaw(q.law);
+  // Si el tema ya nombra la ley ("Disposiciones de la CE"), no se repite
+  const named = law ? law.pattern.test(q.topic) : q.topic.includes(q.law);
+  return named ? q.topic : `${law?.short ?? q.law} · ${q.topic}`;
+}
+
 /** Cabecera de la pregunta según el modo */
 export function modeHeader(mode: QuizMode): string {
   if (mode.kind === "r") return "🔁 <b>Repaso de fallos</b>";
@@ -71,7 +81,7 @@ export function modeHeader(mode: QuizMode): string {
 export function formatQuestion(q: Question, order: Order, header: string): string {
   const options = optionsOf(q);
   const lines = order.map((orig, pos) => `<b>${LETTERS[pos]})</b> ${escapeHtml(options[orig])}`);
-  return [header, `<i>${escapeHtml(q.topic)}</i>`, "", `<b>${escapeHtml(q.statement)}</b>`, "", ...lines].join("\n");
+  return [header, `<i>${escapeHtml(topicLabel(q))}</i>`, "", `<b>${escapeHtml(q.statement)}</b>`, "", ...lines].join("\n");
 }
 
 /**
@@ -116,7 +126,7 @@ export function formatResult(q: Question, order: Order, chosenPos: number, foote
 
   const result = [
     isCorrect ? "🎉 <b>¡Correcto!</b>" : "😕 <b>Has fallado</b>",
-    `<i>${escapeHtml(q.topic)}</i>`,
+    `<i>${escapeHtml(topicLabel(q))}</i>`,
     "",
     `<b>${escapeHtml(q.statement)}</b>`,
     "",

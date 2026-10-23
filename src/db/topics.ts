@@ -39,16 +39,21 @@ export function listTopics(law?: string): TopicWithCount[] {
     .all(...(law !== undefined ? [law] : [])) as unknown as TopicWithCount[];
 }
 
+export interface LawWithCount {
+  law: string;
+  /** Preguntas activas de la ley */
+  questions: number;
+}
+
 /** Leyes que tienen preguntas activas, en el orden del menú */
-export function listLaws(): string[] {
-  return (
-    db
-      .prepare(
-        `SELECT t.law AS law FROM topics t JOIN questions q ON q.topic_id = t.id AND q.active = 1
-         GROUP BY t.law ORDER BY MIN(t.position)`
-      )
-      .all() as { law: string }[]
-  ).map((r) => r.law);
+export function listLaws(): LawWithCount[] {
+  return db
+    .prepare(
+      `SELECT t.law AS law, COUNT(q.id) AS questions
+       FROM topics t JOIN questions q ON q.topic_id = t.id AND q.active = 1
+       GROUP BY t.law ORDER BY MIN(t.position)`
+    )
+    .all() as unknown as LawWithCount[];
 }
 
 /** Aciertos y respuestas del usuario en cada tema (clave: id del tema) */

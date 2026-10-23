@@ -6,7 +6,7 @@ import { countFailedQuestions, countQuestions } from "../db/questions";
 import { getUser } from "../db/users";
 import { examScore, formatScore } from "../services/exam";
 import { getStreak } from "../services/progress";
-import { escapeHtml } from "../services/quiz";
+import { escapeHtml, topicLabel } from "../services/quiz";
 import { isPremium } from "../services/subscription";
 import { formatDateEs, madridDay } from "../services/time";
 
@@ -57,7 +57,7 @@ export async function sendUserStats(ctx: Context): Promise<void> {
   lines.push("", "<b>Por tema</b> (del más flojo al más fuerte):");
   for (const t of topics) {
     const pct = percent(t.correct, t.total);
-    lines.push(`${light(pct)} ${escapeHtml(t.topic)}: <b>${pct}%</b> (${t.correct}/${t.total})`);
+    lines.push(`${light(pct)} ${escapeHtml(topicLabel(t))}: <b>${pct}%</b> (${t.correct}/${t.total})`);
   }
 
   const exams = listRecentExams(userId, 5);

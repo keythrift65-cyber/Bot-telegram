@@ -17,8 +17,9 @@
  *   "opcion_a": "...", "opcion_b": "...", "opcion_c": "...", "opcion_d": "..."
  *   "opciones": { "A": "...", "B": "...", "C": "...", "D": "..." }
  *
- * Para la Constitución, el tema, la ubicación (Título, Capítulo…) y el enlace al
- * BOE se calculan solos a partir de "articulo" (ej: "Art. 17.2 CE").
+ * Para la Constitución, la Ley 39/2015 y la Ley 40/2015, el tema, la ubicación
+ * (Título, Capítulo, Sección) y el enlace al BOE se calculan solos a partir de
+ * "articulo" (ej: "Art. 17.2 CE", "Art. 21.3 Ley 39/2015").
  */
 import fs from "node:fs";
 import path from "node:path";
@@ -39,7 +40,7 @@ import {
   type QuestionData,
 } from "../db/questions";
 import { upsertTopic } from "../db/topics";
-import { articleAnchor, boeUrl, CE_NAME, CE_TOPIC_ORDER, findLaw, locateCE } from "../services/sources";
+import { articleAnchor, boeUrl, findLaw, locate, topicPosition } from "../services/sources";
 
 /** Límites de Telegram para las encuestas del canal (las preguntas más largas no se publican allí) */
 const CHANNEL_MAX_QUESTION = 300;
@@ -113,34 +114,33 @@ function parseQuestion(raw: unknown, where: string, appearance: number): ParsedQ
   const lawInfo = findLaw(givenLaw) ?? findLaw(reference) ?? findLaw(givenTopic);
   const law = lawInfo?.name ?? (givenLaw || givenTopic);
   if (!law) fail('falta "ley" o "tema"');
-  const isCE = lawInfo?.name === CE_NAME;
-  const ce = isCE ? locateCE(reference) : undefined;
+  // Título, Capítulo y Sección del artículo (solo en las leyes con estructura conocida)
+  const located = lawInfo ? locate(lawInfo, reference) : undefined;
 
-  // Tema: el indicado o, en la Constitución, el Título al que pertenece el artículo
+  // Tema: el indicado o, si solo se indica la ley, el que corresponde al artículo
   let topic = givenTopic;
-  if (!topic || topic === law || topic === givenLaw) topic = ce?.topic ?? law;
+  if (!topic || topic === law || topic === givenLaw || topic === lawInfo?.short) topic = located?.topic ?? law;
 
   // Ubicación dentro de la ley (Título, Capítulo, Sección)
   const givenLocation = Array.isArray(q.ubicacion)
     ? q.ubicacion.map(optionalText)
     : optionalText(q.ubicacion).split(/\n|›/).map((s) => s.trim());
   const location = givenLocation.filter(Boolean);
-  if (location.length === 0 && ce) location.push(...ce.location);
+  if (location.length === 0 && located) location.push(...located.location);
 
   // Enlace al texto oficial
   let sourceUrl = optionalText(q.enlace);
   if (sourceUrl && !/^https?:\/\//i.test(sourceUrl)) fail('"enlace" debe empezar por https://');
-  if (!sourceUrl && lawInfo) sourceUrl = boeUrl(lawInfo, ce ? ce.anchor : articleAnchor(reference));
+  if (!sourceUrl && lawInfo) sourceUrl = boeUrl(lawInfo, located ? located.anchor : articleAnchor(reference));
 
   const previous = q.enunciado_anterior;
   const previousStatements = (Array.isArray(previous) ? previous : [previous]).map(optionalText).filter(Boolean);
 
-  const cePosition = isCE ? CE_TOPIC_ORDER.indexOf(topic) : -1;
   return {
     where,
     code,
     law,
-    topicPosition: cePosition >= 0 ? cePosition : 1000 + appearance,
+    topicPosition: topicPosition(law, topic, appearance),
     data: {
       code,
       law,

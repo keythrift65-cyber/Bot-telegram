@@ -1,6 +1,8 @@
 import { InlineKeyboard } from "grammy";
 import { LETTERS, type Question } from "../db/questions";
+import type { LawWithCount } from "../db/topics";
 import { encodeMode, encodeOrder, type Order, type QuizMode } from "../services/quiz";
+import { lawLabel } from "../services/sources";
 
 /**
  * Datos de los botones (callback_data). Telegram admite como máximo 64 bytes.
@@ -96,9 +98,9 @@ export function topicsKeyboard(
 }
 
 /** Lista de leyes, cuando hay preguntas de más de una */
-export function lawsKeyboard(laws: string[]): InlineKeyboard {
+export function lawsKeyboard(laws: LawWithCount[]): InlineKeyboard {
   const kb = new InlineKeyboard();
-  laws.forEach((law, i) => kb.text(law, `tl:${i}`).row());
+  laws.forEach((l, i) => kb.text(`${lawLabel(l.law)} (${l.questions})`, `tl:${i}`).row());
   return kb.text("🏠 Menú", CB.menu);
 }
 

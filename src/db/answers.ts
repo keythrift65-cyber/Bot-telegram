@@ -61,6 +61,8 @@ export function countDistinctAnswered(userId: number): number {
 
 export interface TopicStats {
   topicId: number | null;
+  /** Ley del tema ("" en preguntas antiguas sin ley) */
+  law: string;
   topic: string;
   total: number;
   correct: number;
@@ -70,13 +72,13 @@ export interface TopicStats {
 export function getStatsByTopic(userId: number): TopicStats[] {
   return db
     .prepare(
-      `SELECT q.topic_id AS topicId, COALESCE(t.name, q.topic) AS topic,
+      `SELECT q.topic_id AS topicId, COALESCE(t.law, q.law) AS law, COALESCE(t.name, q.topic) AS topic,
               COUNT(*) AS total, SUM(a.is_correct) AS correct
        FROM answers a
        JOIN questions q ON q.id = a.question_id
        LEFT JOIN topics t ON t.id = q.topic_id
        WHERE a.user_id = ?
-       GROUP BY q.topic_id, COALESCE(t.name, q.topic)
+       GROUP BY q.topic_id, COALESCE(t.law, q.law), COALESCE(t.name, q.topic)
        ORDER BY total DESC`
     )
     .all(userId) as unknown as TopicStats[];

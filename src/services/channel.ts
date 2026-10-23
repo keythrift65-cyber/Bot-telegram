@@ -10,6 +10,7 @@ import {
 } from "../db/channel";
 import { optionsOf, type Question } from "../db/questions";
 import { correctPosition, shuffledOrder } from "./quiz";
+import { findLaw } from "./sources";
 import { hourIn, startOfTodayIn } from "./time";
 
 /** Límites de Telegram para las encuestas */
@@ -56,6 +57,17 @@ export function buildExplanation(q: Question): string | null {
 }
 
 /**
+ * Enunciado de la encuesta con la ley delante ("Ley 39/2015 · Según el artículo 21.3…"),
+ * salvo que el enunciado ya la nombre o que así no quepa.
+ */
+function pollQuestion(q: Question): string {
+  const law = findLaw(q.law);
+  if (!law || law.pattern.test(q.statement)) return q.statement;
+  const withLaw = `${law.short} · ${q.statement}`;
+  return withLaw.length <= MAX_QUESTION ? withLaw : q.statement;
+}
+
+/**
  * Prepara la encuesta tipo quiz con las opciones desordenadas.
  * Devuelve null si la pregunta no cabe en los límites de Telegram.
  */
@@ -69,7 +81,7 @@ export function buildPoll(q: Question): ChannelPoll | null {
 
   const order = shuffledOrder();
   return {
-    question: q.statement,
+    question: pollQuestion(q),
     options: order.map((i) => original[i]),
     correctOptionId: correctPosition(q, order),
     explanation,
