@@ -1,0 +1,66 @@
+import "dotenv/config";
+import { TIME_ZONE } from "./services/time";
+
+/**
+ * Lee una variable de entorno obligatoria y detiene el proceso si falta.
+ */
+function required(name: string): string {
+  const value = process.env[name]?.trim();
+  if (!value) {
+    console.error(`❌ Falta la variable de entorno ${name}. Revisa tu archivo .env`);
+    process.exit(1);
+  }
+  return value;
+}
+
+const adminId = Number(required("ADMIN_ID"));
+if (!Number.isInteger(adminId)) {
+  console.error("❌ ADMIN_ID debe ser un número (tu id de Telegram).");
+  process.exit(1);
+}
+
+/** Variable de entorno opcional: devuelve undefined si no está o está vacía */
+function optional(name: string): string | undefined {
+  return process.env[name]?.trim() || undefined;
+}
+
+export const config = {
+  botToken: required("BOT_TOKEN"),
+  adminId,
+
+  /** Canal donde se publica la pregunta del día: "@micanal" o id numérico "-100…". Sin él, la función está desactivada */
+  channelId: optional("CHANNEL_ID"),
+  /** Usuario del bot sin "@" (para el enlace del canal). Si falta, se usa el que devuelve Telegram */
+  botUsername: optional("BOT_USERNAME")?.replace(/^@/, ""),
+  /** Hora de publicación en el canal (formato cron: minuto hora * * *) */
+  channelCron: "0 9 * * *",
+
+  /** Preguntas gratuitas al día para usuarios no premium */
+  freeDailyLimit: 10,
+  /** Precio de la suscripción mensual en Telegram Stars */
+  premiumPriceStars: 250,
+  /** Duración de la suscripción en segundos (30 días, el único valor que admite Telegram) */
+  subscriptionPeriod: 2592000,
+  /** Días durante los que no se repite una pregunta ya respondida */
+  noRepeatDays: 7,
+  /** Zona horaria para reiniciar el contador diario */
+  timeZone: TIME_ZONE,
+
+  /** Respuestas mínimas de una pregunta para mostrar qué porcentaje de usuarios la acierta */
+  minAnswersForQuestionStats: 5,
+
+  /** Tamaños de simulacro que se pueden elegir (premium) */
+  examSizes: [10, 25, 50],
+  /** Cuánto resta cada fallo en el simulacro (1/3 de acierto, como en el examen de la AGE) */
+  examPenalty: 1 / 3,
+
+  /** Horas (Madrid) que se pueden elegir para el recordatorio diario */
+  reminderHours: [9, 14, 18, 21],
+
+  /** Preguntas extra para quien invita cuando su amigo responde sus primeras preguntas */
+  referralBonus: 10,
+  /** Preguntas extra de bienvenida para quien entra invitado por un amigo */
+  referralWelcomeBonus: 5,
+  /** Preguntas que tiene que responder el amigo para que cuente la invitación */
+  referralRequiredAnswers: 5,
+} as const;
