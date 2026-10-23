@@ -172,6 +172,7 @@ npm run import -- --limpiar                  # además retira las preguntas anti
 ```
 
 - **No crea duplicados**: las preguntas se reconocen por su `id` (o, si no lo tienen, por su enunciado). Volver a importar actualiza las que hayas corregido y deja igual el resto.
+- Si en la carpeta quedan **archivos antiguos sin `id`** con preguntas que ya están en otro archivo con `id` (aunque se haya cambiado el enunciado), se ignoran y salen como "Duplicadas".
 - **Retira, no borra**: al importar la carpeta entera, las preguntas con `id` que ya no estén en ningún archivo dejan de preguntarse, pero sus estadísticas se conservan. Si vuelves a ponerlas, se reactivan.
 - Si alguna pregunta tiene un error de formato o un `id` repetido, no se importa nada y se indica en qué archivo y pregunta está.
 - Avisa de las preguntas que no caben en las encuestas del canal (enunciado de más de 300 caracteres u opciones de más de 100).

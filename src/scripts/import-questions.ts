@@ -110,8 +110,10 @@ function parseQuestion(raw: unknown, where: string, appearance: number): ParsedQ
   const givenLaw = optionalText(q.ley);
   const givenTopic = optionalText(q.tema);
 
-  // Ley: la indicada, la que se deduce del artículo ("... CE") o la del tema antiguo
-  const lawInfo = findLaw(givenLaw) ?? findLaw(reference) ?? findLaw(givenTopic);
+  // Ley: la indicada, la del tema (en los archivos antiguos el tema era la ley, ej:
+  // "Ley 39/2015") o la que se deduce del artículo ("... CE"). El tema va antes que
+  // el artículo porque una pregunta puede citar otra ley ("¿Qué ley regula…? Ley 40/2015").
+  const lawInfo = findLaw(givenLaw) ?? findLaw(givenTopic) ?? findLaw(reference);
   const law = lawInfo?.name ?? (givenLaw || givenTopic);
   if (!law) fail('falta "ley" o "tema"');
   // Título, Capítulo y Sección del artículo (solo en las leyes con estructura conocida)
@@ -238,40 +240,59 @@ function main(): void {
     seenCodes.set(q.code, q.where);
   }
 
+  // Preguntas sin id que en esta importación también vienen con id, con el mismo
+  // enunciado o con el anterior (por ejemplo, un archivo antiguo que se ha quedado
+  // en la carpeta): son la misma pregunta y no se vuelven a guardar
+  const codedStatements = new Set(
+    questions.filter((q) => q.code).flatMap((q) => [q.data.statement, ...q.previousStatements].map((s) => `${q.law}\u0000${s}`))
+  );
+  const toSave = questions.filter((q) => q.code || !codedStatements.has(`${q.law}\u0000${q.data.statement}`));
+
   // Guardamos dentro de una transacción: o entra todo o nada
   const touched = new Set<number>();
   let inserted = 0;
   let updated = 0;
   let unchanged = 0;
-  let duplicated = 0;
+  let duplicated = questions.length - toSave.length;
   let retired = 0;
   const topics = new Set<number>();
+  /** Preguntas guardadas (nuevas, actualizadas o sin cambios) */
+  const saved: ParsedQuestion[] = [];
 
   db.exec("BEGIN");
   try {
     const topicIds = new Map<string, number>();
-    for (const q of questions) {
+    for (const q of toSave) {
       const key = `${q.law}\u0000${q.data.topic}`;
       if (!topicIds.has(key)) topicIds.set(key, upsertTopic(q.law, q.data.topic, q.topicPosition));
     }
 
-    for (const q of questions) {
+    for (const q of toSave) {
       const topicId = topicIds.get(`${q.law}\u0000${q.data.topic}`)!;
       const data: QuestionData = { ...q.data, topic_id: topicId };
-      topics.add(topicId);
 
       // 1) Por id. 2) Pregunta antigua sin id con el mismo enunciado (o el anterior).
       // 3) Sin id en el JSON: misma pregunta por tema y enunciado (comportamiento clásico).
       let row: Question | undefined = q.code ? getQuestionByCode(q.code) : undefined;
       row ??= findLegacyQuestion([q.data.statement, ...q.previousStatements]);
       if (!row && !q.code) row = findByTopicAndStatement(q.data.topic, q.data.statement);
-      if (row && touched.has(row.id)) row = undefined; // ya la ha usado otra pregunta de esta importación
+      if (row && touched.has(row.id)) {
+        // Ya la ha usado otra pregunta de esta importación. Sin id, es la misma
+        // pregunta repetida en otro archivo; con id, es una pregunta nueva.
+        if (!q.code) {
+          duplicated++;
+          continue;
+        }
+        row = undefined;
+      }
 
       if (row && !q.code && row.code) {
         // Pregunta sin id que ya existe con id: no la tocamos para no perder su id
         duplicated++;
         continue;
       }
+      topics.add(topicId);
+      saved.push(q);
 
       try {
         if (row) {
@@ -311,7 +332,7 @@ function main(): void {
     process.exit(1);
   }
 
-  const tooLong = questions.filter(
+  const tooLong = saved.filter(
     (q) =>
       q.data.statement.length > CHANNEL_MAX_QUESTION ||
       [q.data.option_a, q.data.option_b, q.data.option_c, q.data.option_d].some((o) => o.length > CHANNEL_MAX_OPTION)
@@ -322,10 +343,15 @@ function main(): void {
       (duplicated ? ` · Duplicadas: ${duplicated}` : "")
   );
   console.log(`🗂️ Temas: ${topics.size}${retired ? ` · Retiradas: ${retired}` : ""}`);
+  if (duplicated > 0) {
+    console.log(
+      `ℹ️ Las duplicadas son preguntas sin "id" que ya están en otro archivo o en la base de datos con "id", y no se han vuelto a guardar. Si tienes archivos antiguos en preguntas/, puedes quitarlos.`
+    );
+  }
   if (tooLong.length > 0) {
     console.log(
       `📢 ${tooLong.length} preguntas no se publicarán en el canal (enunciado > ${CHANNEL_MAX_QUESTION} o alguna opción > ${CHANNEL_MAX_OPTION} caracteres): ` +
-        tooLong.map((q) => q.code ?? q.where).join(", ")
+        tooLong.map((q) => q.code ?? q.where).join("; ")
     );
   }
   console.log(`📚 Preguntas activas en la base de datos: ${countQuestions()}`);
