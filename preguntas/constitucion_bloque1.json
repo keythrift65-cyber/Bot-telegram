@@ -1,6 +1,8 @@
 [
   {
-    "tema": "Constitución Española",
+    "id": "CE-001",
+    "ley": "Constitución Española",
+    "tema": "Título Preliminar",
     "enunciado": "¿Qué artículos forman el Título Preliminar de la Constitución?",
     "opcion_a": "Del 1 al 10",
     "opcion_b": "Del 1 al 9",
@@ -11,7 +13,9 @@
     "explicacion": "El Título Preliminar va del artículo 1 al 9. El artículo 10 ya abre el Título I."
   },
   {
-    "tema": "Constitución Española",
+    "id": "CE-002",
+    "ley": "Constitución Española",
+    "tema": "Título Preliminar",
     "enunciado": "Según el artículo 1.1, ¿cuáles son los valores superiores del ordenamiento jurídico?",
     "opcion_a": "La libertad, la justicia, la igualdad y el pluralismo político",
     "opcion_b": "La libertad, la igualdad, la solidaridad y el pluralismo político",
@@ -22,7 +26,9 @@
     "explicacion": "Son cuatro: libertad, justicia, igualdad y pluralismo político."
   },
   {
-    "tema": "Constitución Española",
+    "id": "CE-003",
+    "ley": "Constitución Española",
+    "tema": "Título Preliminar",
     "enunciado": "Según el artículo 1.2, la soberanía nacional reside en:",
     "opcion_a": "Las Cortes Generales",
     "opcion_b": "El Rey",
@@ -33,7 +39,9 @@
     "explicacion": "La soberanía reside en el pueblo español, del que emanan los poderes del Estado."
   },
   {
-    "tema": "Constitución Española",
+    "id": "CE-004",
+    "ley": "Constitución Española",
+    "tema": "Título Preliminar",
     "enunciado": "¿Cuál es la forma política del Estado español según el artículo 1.3?",
     "opcion_a": "Monarquía constitucional",
     "opcion_b": "Estado social y democrático de Derecho",
@@ -44,7 +52,9 @@
     "explicacion": "La forma política es la Monarquía parlamentaria. 'Estado social y democrático de Derecho' es cómo se constituye España (art. 1.1)."
   },
   {
-    "tema": "Constitución Española",
+    "id": "CE-005",
+    "ley": "Constitución Española",
+    "tema": "Título Preliminar",
     "enunciado": "El artículo 2 reconoce y garantiza el derecho a la autonomía de:",
     "opcion_a": "Las nacionalidades y regiones",
     "opcion_b": "Las provincias y municipios",
@@ -55,7 +65,9 @@
     "explicacion": "Se garantiza la autonomía de las nacionalidades y regiones que integran la Nación, y la solidaridad entre ellas."
   },
   {
-    "tema": "Constitución Española",
+    "id": "CE-006",
+    "ley": "Constitución Española",
+    "tema": "Título Preliminar",
     "enunciado": "Según el artículo 3.1, ¿quién tiene el deber de conocer el castellano?",
     "opcion_a": "Los funcionarios públicos",
     "opcion_b": "Todos los españoles",
@@ -66,7 +78,9 @@
     "explicacion": "Todos los españoles tienen el deber de conocer el castellano y el derecho a usarlo."
   },
   {
-    "tema": "Constitución Española",
+    "id": "CE-007",
+    "ley": "Constitución Española",
+    "tema": "Título Preliminar",
     "enunciado": "Según el artículo 3.3, la riqueza de las distintas modalidades lingüísticas de España es:",
     "opcion_a": "Un bien de dominio público",
     "opcion_b": "Una competencia exclusiva del Estado",
@@ -77,7 +91,9 @@
     "explicacion": "Las modalidades lingüísticas son patrimonio cultural y deben recibir especial respeto y protección."
   },
   {
-    "tema": "Constitución Española",
+    "id": "CE-008",
+    "ley": "Constitución Española",
+    "tema": "Título Preliminar",
     "enunciado": "Según el artículo 4.1, en la bandera de España la franja amarilla es:",
     "opcion_a": "De la misma anchura que cada una de las rojas",
     "opcion_b": "De triple anchura que cada una de las rojas",
@@ -88,7 +104,9 @@
     "explicacion": "Tres franjas horizontales roja, amarilla y roja; la amarilla mide el doble que cada roja."
   },
   {
-    "tema": "Constitución Española",
+    "id": "CE-009",
+    "ley": "Constitución Española",
+    "tema": "Título Preliminar",
     "enunciado": "Según el artículo 5, la capital del Estado es:",
     "opcion_a": "La villa de Madrid",
     "opcion_b": "La Comunidad de Madrid",
@@ -99,7 +117,9 @@
     "explicacion": "La Constitución dice literalmente 'la villa de Madrid'."
   },
   {
-    "tema": "Constitución Española",
+    "id": "CE-010",
+    "ley": "Constitución Española",
+    "tema": "Título Preliminar",
     "enunciado": "Según el artículo 6, los partidos políticos son instrumento fundamental para:",
     "opcion_a": "La defensa de los intereses económicos y sociales",
     "opcion_b": "La participación política",
@@ -110,7 +130,9 @@
     "explicacion": "Los partidos expresan el pluralismo político, concurren a formar la voluntad popular y son instrumento fundamental para la participación política."
   },
   {
-    "tema": "Constitución Española",
+    "id": "CE-011",
+    "ley": "Constitución Española",
+    "tema": "Título Preliminar",
     "enunciado": "¿En qué artículo se regulan los sindicatos de trabajadores y las asociaciones empresariales dentro del Título Preliminar?",
     "opcion_a": "Artículo 6",
     "opcion_b": "Artículo 9",
@@ -121,7 +143,9 @@
     "explicacion": "El art. 7 trata de sindicatos y asociaciones empresariales. El art. 6 es de partidos políticos y el 8 de las Fuerzas Armadas."
   },
   {
-    "tema": "Constitución Española",
+    "id": "CE-012",
+    "ley": "Constitución Española",
+    "tema": "Título Preliminar",
     "enunciado": "Según el artículo 8.1, las Fuerzas Armadas están constituidas por:",
     "opcion_a": "El Ejército de Tierra, la Armada, el Ejército del Aire y la Guardia Civil",
     "opcion_b": "El Ejército de Tierra y la Armada",
@@ -129,10 +153,12 @@
     "opcion_d": "El Ejército de Tierra, la Armada y el Ejército del Aire",
     "correcta": "D",
     "articulo": "Art. 8.1 CE",
-    "explicacion": "Son tres: Ejército de Tierra, Armada y Ejército del Aire. La Guardia Civil no aparece en el art. 8."
+    "explicacion": "Son tres: Ejército de Tierra, Armada y Ejército del Aire. La Guardia Civil no aparece en el art. 8. Desde 2022 se llama Ejército del Aire y del Espacio, aunque la CE mantiene el nombre original."
   },
   {
-    "tema": "Constitución Española",
+    "id": "CE-013",
+    "ley": "Constitución Española",
+    "tema": "Título Preliminar",
     "enunciado": "Según el artículo 8.2, las bases de la organización militar se regularán por:",
     "opcion_a": "Una ley orgánica",
     "opcion_b": "Una ley ordinaria",
@@ -143,7 +169,9 @@
     "explicacion": "Una ley orgánica regulará las bases de la organización militar."
   },
   {
-    "tema": "Constitución Española",
+    "id": "CE-014",
+    "ley": "Constitución Española",
+    "tema": "Título Preliminar",
     "enunciado": "Según el artículo 9.1, ¿quiénes están sujetos a la Constitución y al resto del ordenamiento jurídico?",
     "opcion_a": "Solo los poderes públicos",
     "opcion_b": "Los ciudadanos y los poderes públicos",
@@ -154,7 +182,9 @@
     "explicacion": "Tanto los ciudadanos como los poderes públicos están sujetos a la Constitución y al resto del ordenamiento."
   },
   {
-    "tema": "Constitución Española",
+    "id": "CE-015",
+    "ley": "Constitución Española",
+    "tema": "Título Preliminar",
     "enunciado": "Según el artículo 9.2, ¿a quién corresponde remover los obstáculos que impidan que la libertad y la igualdad sean reales y efectivas?",
     "opcion_a": "Al Defensor del Pueblo",
     "opcion_b": "A los Jueces y Tribunales",
@@ -165,7 +195,9 @@
     "explicacion": "Corresponde a los poderes públicos promover esas condiciones y remover los obstáculos."
   },
   {
-    "tema": "Constitución Española",
+    "id": "CE-016",
+    "ley": "Constitución Española",
+    "tema": "Título Preliminar",
     "enunciado": "¿Cuál de estos principios NO aparece en el artículo 9.3?",
     "opcion_a": "La jerarquía normativa",
     "opcion_b": "La publicidad de las normas",
@@ -173,10 +205,12 @@
     "opcion_d": "La solidaridad interterritorial",
     "correcta": "D",
     "articulo": "Art. 9.3 CE",
-    "explicacion": "El 9.3 recoge legalidad, jerarquía normativa, publicidad, irretroactividad de disposiciones sancionadoras no favorables, seguridad jurídica, responsabilidad e interdicción de la arbitrariedad. La solidaridad aparece en el art. 2."
+    "explicacion": "El art. 9.3 garantiza la legalidad, la jerarquía normativa, la publicidad, la irretroactividad, la seguridad jurídica, la responsabilidad y la interdicción de la arbitrariedad. La solidaridad aparece en el art. 2."
   },
   {
-    "tema": "Constitución Española",
+    "id": "CE-017",
+    "ley": "Constitución Española",
+    "tema": "Título Preliminar",
     "enunciado": "Según el artículo 9.3, la Constitución garantiza la irretroactividad de:",
     "opcion_a": "Las disposiciones sancionadoras no favorables o restrictivas de derechos individuales",
     "opcion_b": "Todas las leyes",
@@ -187,29 +221,36 @@
     "explicacion": "Solo se garantiza la irretroactividad de las disposiciones sancionadoras no favorables o restrictivas de derechos individuales."
   },
   {
-    "tema": "Constitución Española",
-    "enunciado": "Según el artículo 10.1, ¿qué es fundamento del orden político y de la paz social?",
-    "opcion_a": "La soberanía nacional y la unidad de la Nación",
-    "opcion_b": "La dignidad de la persona, sus derechos inviolables, el libre desarrollo de la personalidad y el respeto a la ley y a los derechos de los demás",
-    "opcion_c": "El principio de legalidad y la seguridad jurídica",
-    "opcion_d": "Los valores superiores del ordenamiento jurídico",
+    "id": "CE-018",
+    "ley": "Constitución Española",
+    "tema": "Título I · Derechos y deberes fundamentales",
+    "enunciado": "Según el artículo 10.1, ¿cuál de estos elementos es fundamento del orden político y de la paz social?",
+    "opcion_a": "La indisoluble unidad de la Nación española",
+    "opcion_b": "La dignidad de la persona",
+    "opcion_c": "La soberanía nacional",
+    "opcion_d": "El principio de legalidad",
     "correcta": "B",
     "articulo": "Art. 10.1 CE",
-    "explicacion": "El art. 10.1 pone como fundamento la dignidad de la persona y los demás elementos citados."
+    "explicacion": "El art. 10.1 cita la dignidad de la persona, sus derechos inviolables, el libre desarrollo de la personalidad y el respeto a la ley y a los derechos de los demás. Ojo: la «indisoluble unidad de la Nación» es el fundamento de la Constitución (art. 2).",
+    "enunciado_anterior": "Según el artículo 10.1, ¿qué es fundamento del orden político y de la paz social?"
   },
   {
-    "tema": "Constitución Española",
+    "id": "CE-019",
+    "ley": "Constitución Española",
+    "tema": "Título I · Derechos y deberes fundamentales",
     "enunciado": "Según el artículo 10.2, las normas sobre derechos fundamentales se interpretarán de conformidad con:",
     "opcion_a": "La jurisprudencia del Tribunal Supremo",
     "opcion_b": "La Carta de Derechos Fundamentales de la Unión Europea",
-    "opcion_c": "La Declaración Universal de Derechos Humanos y los tratados y acuerdos internacionales ratificados por España",
+    "opcion_c": "La Declaración Universal de Derechos Humanos y los tratados ratificados por España",
     "opcion_d": "Las leyes orgánicas que los desarrollen",
     "correcta": "C",
     "articulo": "Art. 10.2 CE",
     "explicacion": "Se interpretan conforme a la Declaración Universal de Derechos Humanos y los tratados sobre esas materias ratificados por España."
   },
   {
-    "tema": "Constitución Española",
+    "id": "CE-020",
+    "ley": "Constitución Española",
+    "tema": "Título I · Derechos y deberes fundamentales",
     "enunciado": "Según el artículo 11.2, ¿quién no podrá ser privado de su nacionalidad?",
     "opcion_a": "Ningún español mayor de edad",
     "opcion_b": "Ningún español residente en España",
@@ -220,9 +261,11 @@
     "explicacion": "La protección absoluta es para los españoles de origen."
   },
   {
-    "tema": "Constitución Española",
+    "id": "CE-021",
+    "ley": "Constitución Española",
+    "tema": "Título I · Derechos y deberes fundamentales",
     "enunciado": "Según el artículo 11.3, el Estado podrá concertar tratados de doble nacionalidad con:",
-    "opcion_a": "Los países iberoamericanos o con aquellos que hayan tenido o tengan una particular vinculación con España",
+    "opcion_a": "Los países iberoamericanos o los que tengan o hayan tenido una particular vinculación con España",
     "opcion_b": "Los Estados miembros de la Unión Europea",
     "opcion_c": "Cualquier país que lo solicite",
     "opcion_d": "Solo los países iberoamericanos",
@@ -231,7 +274,9 @@
     "explicacion": "Iberoamérica y países con particular vinculación con España."
   },
   {
-    "tema": "Constitución Española",
+    "id": "CE-022",
+    "ley": "Constitución Española",
+    "tema": "Título I · Derechos y deberes fundamentales",
     "enunciado": "Según el artículo 12, los españoles son mayores de edad a los:",
     "opcion_a": "Dieciséis años",
     "opcion_b": "Dieciocho años",
@@ -242,7 +287,9 @@
     "explicacion": "La mayoría de edad se fija en los dieciocho años."
   },
   {
-    "tema": "Constitución Española",
+    "id": "CE-023",
+    "ley": "Constitución Española",
+    "tema": "Título I · Derechos y deberes fundamentales",
     "enunciado": "Según el artículo 13.2, los extranjeros pueden tener derecho de sufragio activo y pasivo, atendiendo a criterios de reciprocidad, en:",
     "opcion_a": "Las elecciones generales",
     "opcion_b": "Las elecciones autonómicas",
@@ -253,7 +300,9 @@
     "explicacion": "La excepción para extranjeros solo se prevé en las elecciones municipales, por tratado o ley y con reciprocidad."
   },
   {
-    "tema": "Constitución Española",
+    "id": "CE-024",
+    "ley": "Constitución Española",
+    "tema": "Título I · Derechos y deberes fundamentales",
     "enunciado": "Según el artículo 13.3, quedan excluidos de la extradición:",
     "opcion_a": "Los delitos políticos, incluidos los actos de terrorismo",
     "opcion_b": "Los delitos cometidos por españoles de origen",
@@ -264,7 +313,9 @@
     "explicacion": "Se excluyen los delitos políticos, pero el terrorismo no se considera delito político."
   },
   {
-    "tema": "Constitución Española",
+    "id": "CE-025",
+    "ley": "Constitución Española",
+    "tema": "Título I · Derechos y deberes fundamentales",
     "enunciado": "¿Cuál de estas causas de discriminación NO se cita expresamente en el artículo 14?",
     "opcion_a": "Nacimiento",
     "opcion_b": "Religión",
@@ -275,7 +326,9 @@
     "explicacion": "El art. 14 cita nacimiento, raza, sexo, religión, opinión o cualquier otra condición o circunstancia personal o social. La edad no se nombra expresamente."
   },
   {
-    "tema": "Constitución Española",
+    "id": "CE-026",
+    "ley": "Constitución Española",
+    "tema": "Título I · Derechos y deberes fundamentales",
     "enunciado": "Según el texto del artículo 15, la pena de muerte:",
     "opcion_a": "Queda abolida, salvo lo que puedan disponer las leyes penales militares para tiempos de guerra",
     "opcion_b": "Queda abolida en todo caso y sin excepciones",
@@ -283,10 +336,12 @@
     "opcion_d": "Puede imponerse durante el estado de sitio",
     "correcta": "A",
     "articulo": "Art. 15 CE",
-    "explicacion": "El texto constitucional deja a salvo las leyes penales militares en tiempo de guerra."
+    "explicacion": "El texto constitucional deja a salvo lo que dispongan las leyes penales militares para tiempos de guerra. Ojo: la Ley Orgánica 11/1995 abolió también la pena de muerte en tiempo de guerra."
   },
   {
-    "tema": "Constitución Española",
+    "id": "CE-027",
+    "ley": "Constitución Española",
+    "tema": "Título I · Derechos y deberes fundamentales",
     "enunciado": "Según el artículo 16.3:",
     "opcion_a": "La religión católica es la oficial del Estado",
     "opcion_b": "Ninguna confesión tendrá carácter estatal",
@@ -297,7 +352,9 @@
     "explicacion": "Ninguna confesión es estatal, aunque los poderes públicos cooperan con la Iglesia Católica y las demás confesiones."
   },
   {
-    "tema": "Constitución Española",
+    "id": "CE-028",
+    "ley": "Constitución Española",
+    "tema": "Título I · Derechos y deberes fundamentales",
     "enunciado": "Según el artículo 16.2, nadie podrá ser obligado a declarar sobre:",
     "opcion_a": "Su domicilio y su patrimonio",
     "opcion_b": "Su afiliación sindical",
@@ -308,7 +365,9 @@
     "explicacion": "Se protege no declarar sobre ideología, religión o creencias."
   },
   {
-    "tema": "Constitución Española",
+    "id": "CE-029",
+    "ley": "Constitución Española",
+    "tema": "Título I · Derechos y deberes fundamentales",
     "enunciado": "Según el artículo 17.2, ¿cuál es el plazo máximo de la detención preventiva?",
     "opcion_a": "24 horas",
     "opcion_b": "48 horas",
@@ -319,7 +378,9 @@
     "explicacion": "En todo caso, en un máximo de 72 horas el detenido debe quedar libre o a disposición judicial."
   },
   {
-    "tema": "Constitución Española",
+    "id": "CE-030",
+    "ley": "Constitución Española",
+    "tema": "Título I · Derechos y deberes fundamentales",
     "enunciado": "El procedimiento de «habeas corpus» del artículo 17.4 sirve para:",
     "opcion_a": "Poner inmediatamente a disposición judicial a toda persona detenida ilegalmente",
     "opcion_b": "Fijar la duración de la prisión provisional",
@@ -330,7 +391,9 @@
     "explicacion": "El habeas corpus busca la inmediata puesta a disposición judicial de quien está detenido ilegalmente."
   },
   {
-    "tema": "Constitución Española",
+    "id": "CE-031",
+    "ley": "Constitución Española",
+    "tema": "Título I · Derechos y deberes fundamentales",
     "enunciado": "Según el artículo 18.2, se puede entrar en un domicilio sin consentimiento del titular ni resolución judicial:",
     "opcion_a": "Nunca",
     "opcion_b": "En caso de flagrante delito",
@@ -341,7 +404,9 @@
     "explicacion": "La única excepción que cita el artículo es el flagrante delito."
   },
   {
-    "tema": "Constitución Española",
+    "id": "CE-032",
+    "ley": "Constitución Española",
+    "tema": "Título I · Derechos y deberes fundamentales",
     "enunciado": "Según el artículo 18.3, el secreto de las comunicaciones se garantiza:",
     "opcion_a": "Sin excepción alguna",
     "opcion_b": "Salvo autorización del Ministerio Fiscal",
@@ -352,7 +417,9 @@
     "explicacion": "Solo una resolución judicial puede levantar el secreto de las comunicaciones."
   },
   {
-    "tema": "Constitución Española",
+    "id": "CE-033",
+    "ley": "Constitución Española",
+    "tema": "Título I · Derechos y deberes fundamentales",
     "enunciado": "El artículo 18.4 establece que la ley limitará el uso de:",
     "opcion_a": "Los medios de comunicación social",
     "opcion_b": "Las armas y explosivos",
@@ -363,7 +430,9 @@
     "explicacion": "La ley limitará el uso de la informática para garantizar el honor y la intimidad."
   },
   {
-    "tema": "Constitución Española",
+    "id": "CE-034",
+    "ley": "Constitución Española",
+    "tema": "Título I · Derechos y deberes fundamentales",
     "enunciado": "Según el artículo 20.2, el ejercicio de las libertades de expresión e información:",
     "opcion_a": "No puede restringirse mediante ningún tipo de censura previa",
     "opcion_b": "Requiere autorización administrativa previa",
@@ -374,7 +443,9 @@
     "explicacion": "Se prohíbe cualquier tipo de censura previa."
   },
   {
-    "tema": "Constitución Española",
+    "id": "CE-035",
+    "ley": "Constitución Española",
+    "tema": "Título I · Derechos y deberes fundamentales",
     "enunciado": "Según el artículo 20.5, el secuestro de publicaciones solo podrá acordarse:",
     "opcion_a": "Por el Ministerio del Interior",
     "opcion_b": "En virtud de resolución judicial",
@@ -385,7 +456,9 @@
     "explicacion": "El secuestro de publicaciones, grabaciones y otros medios solo cabe por resolución judicial."
   },
   {
-    "tema": "Constitución Española",
+    "id": "CE-036",
+    "ley": "Constitución Española",
+    "tema": "Título I · Derechos y deberes fundamentales",
     "enunciado": "Según el artículo 21.1, el ejercicio del derecho de reunión pacífica y sin armas:",
     "opcion_a": "Necesita autorización de la Delegación del Gobierno",
     "opcion_b": "Necesita autorización del Ayuntamiento",
@@ -396,7 +469,9 @@
     "explicacion": "La reunión pacífica no necesita autorización previa."
   },
   {
-    "tema": "Constitución Española",
+    "id": "CE-037",
+    "ley": "Constitución Española",
+    "tema": "Título I · Derechos y deberes fundamentales",
     "enunciado": "Según el artículo 21.2, en las reuniones en lugares de tránsito público y manifestaciones:",
     "opcion_a": "Se necesita autorización judicial",
     "opcion_b": "Están prohibidas salvo autorización expresa",
@@ -407,7 +482,9 @@
     "explicacion": "Basta con comunicarlo antes a la autoridad, que solo puede prohibirlas por razones fundadas de alteración del orden público."
   },
   {
-    "tema": "Constitución Española",
+    "id": "CE-038",
+    "ley": "Constitución Española",
+    "tema": "Título I · Derechos y deberes fundamentales",
     "enunciado": "Según el artículo 22.3, las asociaciones deberán inscribirse en un registro:",
     "opcion_a": "A los solos efectos de publicidad",
     "opcion_b": "Para adquirir personalidad jurídica y poder funcionar",
@@ -418,7 +495,9 @@
     "explicacion": "La inscripción es a los solos efectos de publicidad."
   },
   {
-    "tema": "Constitución Española",
+    "id": "CE-039",
+    "ley": "Constitución Española",
+    "tema": "Título I · Derechos y deberes fundamentales",
     "enunciado": "Según el artículo 22.4, las asociaciones solo podrán ser disueltas o suspendidas:",
     "opcion_a": "Por acuerdo del Consejo de Ministros",
     "opcion_b": "En virtud de resolución judicial motivada",
@@ -429,7 +508,9 @@
     "explicacion": "Hace falta una resolución judicial motivada."
   },
   {
-    "tema": "Constitución Española",
+    "id": "CE-040",
+    "ley": "Constitución Española",
+    "tema": "Título I · Derechos y deberes fundamentales",
     "enunciado": "Según el artículo 22.5, están prohibidas:",
     "opcion_a": "Las asociaciones de extranjeros",
     "opcion_b": "Las asociaciones no inscritas",
@@ -440,7 +521,9 @@
     "explicacion": "Se prohíben las asociaciones secretas y las paramilitares."
   },
   {
-    "tema": "Constitución Española",
+    "id": "CE-041",
+    "ley": "Constitución Española",
+    "tema": "Título I · Derechos y deberes fundamentales",
     "enunciado": "¿Qué artículo reconoce el derecho a acceder en condiciones de igualdad a las funciones y cargos públicos?",
     "opcion_a": "Artículo 14",
     "opcion_b": "Artículo 103",
@@ -451,7 +534,9 @@
     "explicacion": "Es el art. 23.2, con los requisitos que señalen las leyes. El art. 103.3 habla del acceso según mérito y capacidad."
   },
   {
-    "tema": "Constitución Española",
+    "id": "CE-042",
+    "ley": "Constitución Española",
+    "tema": "Título I · Derechos y deberes fundamentales",
     "enunciado": "Según el artículo 24.1, todas las personas tienen derecho a obtener la tutela efectiva de los jueces y tribunales sin que, en ningún caso, pueda producirse:",
     "opcion_a": "Indefensión",
     "opcion_b": "Dilación",
@@ -462,7 +547,9 @@
     "explicacion": "La tutela judicial efectiva se garantiza sin que pueda producirse indefensión."
   },
   {
-    "tema": "Constitución Española",
+    "id": "CE-043",
+    "ley": "Constitución Española",
+    "tema": "Título I · Derechos y deberes fundamentales",
     "enunciado": "Según el artículo 25.3, la Administración civil:",
     "opcion_a": "Puede imponer arresto domiciliario",
     "opcion_b": "No podrá imponer sanciones que, directa o subsidiariamente, impliquen privación de libertad",
@@ -473,7 +560,9 @@
     "explicacion": "La Administración civil nunca puede imponer sanciones que impliquen privación de libertad."
   },
   {
-    "tema": "Constitución Española",
+    "id": "CE-044",
+    "ley": "Constitución Española",
+    "tema": "Título I · Derechos y deberes fundamentales",
     "enunciado": "Según el artículo 25.2, las penas privativas de libertad estarán orientadas hacia:",
     "opcion_a": "El castigo y la prevención general",
     "opcion_b": "La reparación del daño causado",
@@ -484,7 +573,9 @@
     "explicacion": "Se orientan a la reeducación y reinserción social y no pueden consistir en trabajos forzados."
   },
   {
-    "tema": "Constitución Española",
+    "id": "CE-045",
+    "ley": "Constitución Española",
+    "tema": "Título I · Derechos y deberes fundamentales",
     "enunciado": "Según el artículo 26, se prohíben los Tribunales de Honor en el ámbito de:",
     "opcion_a": "La Administración civil y las organizaciones profesionales",
     "opcion_b": "Las Fuerzas Armadas",
@@ -495,7 +586,9 @@
     "explicacion": "La prohibición se refiere a la Administración civil y a las organizaciones profesionales."
   },
   {
-    "tema": "Constitución Española",
+    "id": "CE-046",
+    "ley": "Constitución Española",
+    "tema": "Título I · Derechos y deberes fundamentales",
     "enunciado": "Según el artículo 27.4, la enseñanza básica es:",
     "opcion_a": "Obligatoria, pero no gratuita",
     "opcion_b": "Gratuita, pero no obligatoria",
@@ -506,7 +599,9 @@
     "explicacion": "La enseñanza básica es obligatoria y gratuita."
   },
   {
-    "tema": "Constitución Española",
+    "id": "CE-047",
+    "ley": "Constitución Española",
+    "tema": "Título I · Derechos y deberes fundamentales",
     "enunciado": "¿En qué artículo se reconoce la autonomía de las Universidades?",
     "opcion_a": "Artículo 20",
     "opcion_b": "Artículo 27",
@@ -517,7 +612,9 @@
     "explicacion": "El art. 27.10 reconoce la autonomía de las Universidades en los términos que establezca la ley."
   },
   {
-    "tema": "Constitución Española",
+    "id": "CE-048",
+    "ley": "Constitución Española",
+    "tema": "Título I · Derechos y deberes fundamentales",
     "enunciado": "Según el artículo 28.1, la ley podrá limitar o exceptuar el derecho de sindicación a:",
     "opcion_a": "Los funcionarios públicos",
     "opcion_b": "Los jueces y fiscales",
@@ -528,7 +625,9 @@
     "explicacion": "Se puede limitar o exceptuar para Fuerzas o Institutos armados y Cuerpos con disciplina militar. Para los funcionarios, la ley solo regula sus peculiaridades."
   },
   {
-    "tema": "Constitución Española",
+    "id": "CE-049",
+    "ley": "Constitución Española",
+    "tema": "Título I · Derechos y deberes fundamentales",
     "enunciado": "Según el artículo 29.2, los miembros de las Fuerzas o Institutos armados pueden ejercer el derecho de petición:",
     "opcion_a": "Solo individualmente",
     "opcion_b": "Solo colectivamente",
@@ -539,7 +638,9 @@
     "explicacion": "Solo individualmente y según su legislación específica."
   },
   {
-    "tema": "Constitución Española",
+    "id": "CE-050",
+    "ley": "Constitución Española",
+    "tema": "Título I · Derechos y deberes fundamentales",
     "enunciado": "Según el artículo 30.1, defender a España es para los españoles:",
     "opcion_a": "Solo un deber",
     "opcion_b": "Un derecho y un deber",
@@ -550,7 +651,9 @@
     "explicacion": "Los españoles tienen el derecho y el deber de defender a España."
   },
   {
-    "tema": "Constitución Española",
+    "id": "CE-051",
+    "ley": "Constitución Española",
+    "tema": "Título I · Derechos y deberes fundamentales",
     "enunciado": "Según el artículo 31.1, el sistema tributario se inspira en los principios de:",
     "opcion_a": "Eficiencia y economía",
     "opcion_b": "Legalidad y jerarquía",
@@ -561,7 +664,9 @@
     "explicacion": "Sistema tributario justo, basado en igualdad y progresividad, y nunca confiscatorio. Eficiencia y economía son criterios del gasto público (art. 31.2)."
   },
   {
-    "tema": "Constitución Española",
+    "id": "CE-052",
+    "ley": "Constitución Española",
+    "tema": "Título I · Derechos y deberes fundamentales",
     "enunciado": "Según el artículo 31.2, la programación y ejecución del gasto público responderán a los criterios de:",
     "opcion_a": "Eficiencia y economía",
     "opcion_b": "Igualdad y progresividad",
@@ -572,7 +677,9 @@
     "explicacion": "El gasto público hace una asignación equitativa y se rige por eficiencia y economía."
   },
   {
-    "tema": "Constitución Española",
+    "id": "CE-053",
+    "ley": "Constitución Española",
+    "tema": "Título I · Derechos y deberes fundamentales",
     "enunciado": "Según el artículo 33.1, se reconoce el derecho a:",
     "opcion_a": "La propiedad privada, pero no a la herencia",
     "opcion_b": "La libertad de empresa y a la herencia",
@@ -583,7 +690,9 @@
     "explicacion": "Se reconocen la propiedad privada y la herencia, delimitadas por su función social."
   },
   {
-    "tema": "Constitución Española",
+    "id": "CE-054",
+    "ley": "Constitución Española",
+    "tema": "Título I · Derechos y deberes fundamentales",
     "enunciado": "Según el artículo 35.1, todos los españoles tienen:",
     "opcion_a": "El derecho al trabajo, pero no el deber de trabajar",
     "opcion_b": "El deber de trabajar y el derecho al trabajo",
@@ -594,7 +703,9 @@
     "explicacion": "El art. 35 recoge a la vez el deber de trabajar y el derecho al trabajo."
   },
   {
-    "tema": "Constitución Española",
+    "id": "CE-055",
+    "ley": "Constitución Española",
+    "tema": "Título I · Derechos y deberes fundamentales",
     "enunciado": "Según el artículo 38, la libertad de empresa se reconoce en el marco de:",
     "opcion_a": "La planificación económica del Estado",
     "opcion_b": "Las normas de la Unión Europea",
@@ -605,7 +716,9 @@
     "explicacion": "Se reconoce la libertad de empresa en el marco de la economía de mercado."
   },
   {
-    "tema": "Constitución Española",
+    "id": "CE-056",
+    "ley": "Constitución Española",
+    "tema": "Título I · Derechos y deberes fundamentales",
     "enunciado": "¿Cómo se titula el Capítulo tercero del Título I (arts. 39 a 52)?",
     "opcion_a": "De los principios rectores de la política social y económica",
     "opcion_b": "De los derechos y deberes de los ciudadanos",
@@ -616,7 +729,9 @@
     "explicacion": "El Capítulo tercero recoge los principios rectores de la política social y económica."
   },
   {
-    "tema": "Constitución Española",
+    "id": "CE-057",
+    "ley": "Constitución Española",
+    "tema": "Título I · Derechos y deberes fundamentales",
     "enunciado": "El derecho a la protección de la salud (art. 43) se encuentra en:",
     "opcion_a": "La Sección 1.ª del Capítulo segundo del Título I",
     "opcion_b": "La Sección 2.ª del Capítulo segundo del Título I",
@@ -627,7 +742,9 @@
     "explicacion": "Está entre los principios rectores (Capítulo tercero), por eso no tiene la protección del recurso de amparo."
   },
   {
-    "tema": "Constitución Española",
+    "id": "CE-058",
+    "ley": "Constitución Española",
+    "tema": "Título I · Derechos y deberes fundamentales",
     "enunciado": "Según el artículo 47, todos los españoles tienen derecho a disfrutar de:",
     "opcion_a": "Una vivienda en propiedad",
     "opcion_b": "Una vivienda digna y adecuada",
@@ -638,7 +755,9 @@
     "explicacion": "El derecho es a una vivienda digna y adecuada."
   },
   {
-    "tema": "Constitución Española",
+    "id": "CE-059",
+    "ley": "Constitución Española",
+    "tema": "Título I · Derechos y deberes fundamentales",
     "enunciado": "Tras su reforma, ¿qué expresión utiliza el artículo 49?",
     "opcion_a": "Disminuidos físicos, sensoriales y psíquicos",
     "opcion_b": "Personas dependientes",
@@ -649,7 +768,9 @@
     "explicacion": "La reforma publicada en febrero de 2024 sustituyó 'disminuidos' por 'personas con discapacidad'."
   },
   {
-    "tema": "Constitución Española",
+    "id": "CE-060",
+    "ley": "Constitución Española",
+    "tema": "Título I · Derechos y deberes fundamentales",
     "enunciado": "Según el artículo 50, los poderes públicos garantizarán la suficiencia económica en la tercera edad mediante:",
     "opcion_a": "Pensiones adecuadas y periódicamente actualizadas",
     "opcion_b": "Un sistema privado de pensiones",
@@ -660,7 +781,9 @@
     "explicacion": "Mediante pensiones adecuadas y periódicamente actualizadas."
   },
   {
-    "tema": "Constitución Española",
+    "id": "CE-061",
+    "ley": "Constitución Española",
+    "tema": "Título I · Derechos y deberes fundamentales",
     "enunciado": "Según el artículo 53.1, el ejercicio de los derechos del Capítulo segundo del Título I solo podrá regularse:",
     "opcion_a": "Por decreto-ley",
     "opcion_b": "Por reglamento",
@@ -671,7 +794,9 @@
     "explicacion": "Solo por ley, y siempre respetando el contenido esencial del derecho."
   },
   {
-    "tema": "Constitución Española",
+    "id": "CE-062",
+    "ley": "Constitución Española",
+    "tema": "Título I · Derechos y deberes fundamentales",
     "enunciado": "Según el artículo 53.2, el recurso de amparo ante el Tribunal Constitucional protege:",
     "opcion_a": "Todos los derechos del Título I",
     "opcion_b": "El artículo 14, la Sección 1.ª del Capítulo segundo y la objeción de conciencia del artículo 30",
@@ -682,7 +807,9 @@
     "explicacion": "Protege el art. 14, la Sección 1.ª (arts. 15 a 29) y la objeción de conciencia del art. 30."
   },
   {
-    "tema": "Constitución Española",
+    "id": "CE-063",
+    "ley": "Constitución Española",
+    "tema": "Título I · Derechos y deberes fundamentales",
     "enunciado": "Según el artículo 54, el Defensor del Pueblo es:",
     "opcion_a": "Un órgano dependiente del Gobierno",
     "opcion_b": "Un miembro del Consejo General del Poder Judicial",
@@ -693,7 +820,9 @@
     "explicacion": "Es alto comisionado de las Cortes Generales, designado por ellas y regulado por ley orgánica."
   },
   {
-    "tema": "Constitución Española",
+    "id": "CE-064",
+    "ley": "Constitución Española",
+    "tema": "Título I · Derechos y deberes fundamentales",
     "enunciado": "Según el artículo 55.1, en el estado de excepción NO puede suspenderse el derecho del:",
     "opcion_a": "Artículo 17.3 (derechos del detenido)",
     "opcion_b": "Artículo 18.2 (inviolabilidad del domicilio)",
